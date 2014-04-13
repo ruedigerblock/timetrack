@@ -14,39 +14,71 @@ module Gui
         Gtk.main_quit
       end
 
-      hbox = Gtk::HBox.new(false, 0)
-      vonbis_table = Gtk::Table.new(5,1, false)
+      vbox = Gtk::VBox.new(false, 0)
+      
+      #### CALENDAR
+      calendar = Gtk::Calendar.new
+      
+      #### VON-BIS TABLE
+      vonbis_table = Gtk::Table.new(7,1, false)
       von_label = Gtk::Label.new "von"
       bis_label = Gtk::Label.new "bis"
 
-      von_kl_button = Gtk::Button.new "<"
+      von_k_button = Gtk::Button.new "<"
+      von_kk_button = Gtk::Button.new "<<"
       von_entry     = Gtk::Entry.new
       von_entry.max_length=5
       von_entry.text="8,5"
       von_entry.width_chars=5
-      von_gr_button = Gtk::Button.new ">"
-      bis_kl_button = Gtk::Button.new "<"
+      von_gg_button = Gtk::Button.new ">>"
+      von_g_button = Gtk::Button.new ">"
+      bis_k_button = Gtk::Button.new "<"
+      bis_kk_button = Gtk::Button.new "<<"
       bis_entry     = Gtk::Entry.new
       bis_entry.max_length=5
       bis_entry.text="17,0"
       bis_entry.width_chars=5
-      bis_gr_button = Gtk::Button.new ">"
+      bis_gg_button = Gtk::Button.new ">>"
+      bis_g_button = Gtk::Button.new ">"
 
       vonbis_table.attach von_label, 1,2,0,1
       vonbis_table.attach bis_label, 4,5,0,1
-      vonbis_table.attach von_kl_button , 0,1,1,2
+      vonbis_table.attach von_k_button  , 0,1,1,2
+      vonbis_table.attach von_kk_button , 0,1,1,2
       vonbis_table.attach von_entry     , 1,2,1,2
-      vonbis_table.attach von_gr_button , 2,3,1,2
-      vonbis_table.attach bis_kl_button , 3,4,1,2
-      vonbis_table.attach bis_entry     , 4,5,1,2
-      vonbis_table.attach bis_gr_button , 5,6,1,2
+      vonbis_table.attach von_gg_button , 2,3,1,2
+      vonbis_table.attach von_g_button  , 3,4,1,2
+      vonbis_table.attach bis_k_button  , 4,5,1,2
+      vonbis_table.attach bis_kk_button , 5,6,1,2
+      vonbis_table.attach bis_entry     , 6,7,1,2
+      vonbis_table.attach bis_gg_button , 7,8,1,2
+      vonbis_table.attach bis_g_button  , 8,9,1,2
 
-      calendar = Gtk::Calendar.new
+      #### JOBS
+      
+      job_table = Gtk::Table.new(5,1, false)
+      job_name = Gtk::Entry.new
+      job_k_button = Gtk::Button.new ("<")
+      job_kk_button = Gtk::Button.new ("<<")
+      job_zeit = Gtk::Entry.new
+      job_zeit.max_length=5
+      job_zeit.text="0,00"
+      job_zeit.width_chars=5
+      job_gg_button = Gtk::Button.new (">>")
+      job_g_button = Gtk::Button.new (">")
 
-      hbox.pack_start vonbis_table, true, true, 0
-      hbox.pack_start calendar, true, true, 0
+      job_table.attach job_name, 0,1,0,1
+      job_table.attach job_k_button, 1,2,0,1
+      job_table.attach job_kk_button, 2,3,0,1
+      job_table.attach job_zeit, 3,4,0,1
+      job_table.attach job_gg_button, 4,5,0,1
+      job_table.attach job_g_button, 5,6,0,1
 
-      add hbox
+      vbox.pack_start calendar, true, true, 0
+      vbox.pack_start vonbis_table, true, true, 0
+      vbox.pack_start job_table, true, true, 0
+
+      add vbox
 
     end
 
