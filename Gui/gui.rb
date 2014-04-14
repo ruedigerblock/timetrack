@@ -36,22 +36,22 @@ module Gui
       von_label = Gtk::Label.new "von"
       bis_label = Gtk::Label.new "bis"
 
-      von_k_button = Gtk::Button.new "<"
-      von_kk_button = Gtk::Button.new "<<"
       von_entry     = Gtk::Entry.new
+      von_k_button = Button.new "<",von_entry
+      von_kk_button = Button.new "<<",von_entry
       von_entry.max_length=5
       von_entry.text="8.5"
       von_entry.width_chars=5
-      von_gg_button = Gtk::Button.new ">>"
-      von_g_button = Gtk::Button.new ">"
-      bis_k_button = Gtk::Button.new "<"
-      bis_kk_button = Gtk::Button.new "<<"
+      von_gg_button = Button.new ">>",von_entry
+      von_g_button = Button.new ">",von_entry
       bis_entry     = Gtk::Entry.new
+      bis_k_button = Button.new "<",bis_entry
+      bis_kk_button = Button.new "<<",bis_entry
       bis_entry.max_length=5
       bis_entry.text="17.0"
       bis_entry.width_chars=5
-      bis_gg_button = Gtk::Button.new ">>"
-      bis_g_button = Gtk::Button.new ">"
+      bis_gg_button = Button.new ">>",bis_entry
+      bis_g_button = Button.new ">",bis_entry
 
       vonbis_table.attach von_label, 1,2,0,1
       vonbis_table.attach bis_label, 4,5,0,1
@@ -70,14 +70,14 @@ module Gui
       
       job_table = Gtk::Table.new(5,1, false)
       job_name = Gtk::Entry.new
-      job_k_button = Gtk::Button.new ("<")
-      job_kk_button = Gtk::Button.new ("<<")
       job_zeit = Gtk::Entry.new
+      job_k_button = Button.new "<", job_zeit
+      job_kk_button = Button.new "<<",job_zeit
       job_zeit.max_length=5
       job_zeit.text="0,00"
       job_zeit.width_chars=5
-      job_gg_button = Gtk::Button.new (">>")
-      job_g_button = Gtk::Button.new (">")
+      job_gg_button = Button.new ">>",job_zeit
+      job_g_button = Button.new ">",job_zeit
 
       job_table.attach job_name, 0,1,0,1
       job_table.attach job_k_button, 1,2,0,1
@@ -95,4 +95,32 @@ module Gui
     end
 
   end
+
+  class Button < Gtk::Button
+    def initialize (text,entry)
+      super (text)
+      @entry = entry
+
+      self.signal_connect "clicked" do
+        adder = case self.label
+         when "<" then "-0.25"
+         when "<<" then "-0.5"
+         when ">" then "0.25"
+         when ">>" then "0.5"
+        end
+      
+        result = (@entry.text.to_f+adder.to_f)
+        if result >= 0
+          @entry.text=result.to_s
+        end
+      end
+        
+    end
+
+    def get_f
+      puts f
+    end
+
+  end
+
 end
