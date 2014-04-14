@@ -1,3 +1,5 @@
+require 'date'
+
 module Gui
   class Window < Gtk::Window
     def initialize
@@ -18,6 +20,16 @@ module Gui
       
       #### CALENDAR
       calendar = Gtk::Calendar.new
+      calendar.show_heading=true
+      calendar.show_week_numbers=true
+      calendar.show_day_names=true
+      puts calendar.style
+
+      #### DATE
+
+        puts calendar.inspect
+#      date = Date.new(calendar.date.to_a)
+#      puts date
       
       #### VON-BIS TABLE
       vonbis_table = Gtk::Table.new(7,1, false)
@@ -28,7 +40,7 @@ module Gui
       von_kk_button = Gtk::Button.new "<<"
       von_entry     = Gtk::Entry.new
       von_entry.max_length=5
-      von_entry.text="8,5"
+      von_entry.text="8.5"
       von_entry.width_chars=5
       von_gg_button = Gtk::Button.new ">>"
       von_g_button = Gtk::Button.new ">"
@@ -36,23 +48,23 @@ module Gui
       bis_kk_button = Gtk::Button.new "<<"
       bis_entry     = Gtk::Entry.new
       bis_entry.max_length=5
-      bis_entry.text="17,0"
+      bis_entry.text="17.0"
       bis_entry.width_chars=5
       bis_gg_button = Gtk::Button.new ">>"
       bis_g_button = Gtk::Button.new ">"
 
       vonbis_table.attach von_label, 1,2,0,1
       vonbis_table.attach bis_label, 4,5,0,1
-      vonbis_table.attach von_k_button  , 0,1,1,2
-      vonbis_table.attach von_kk_button , 0,1,1,2
-      vonbis_table.attach von_entry     , 1,2,1,2
-      vonbis_table.attach von_gg_button , 2,3,1,2
-      vonbis_table.attach von_g_button  , 3,4,1,2
-      vonbis_table.attach bis_k_button  , 4,5,1,2
-      vonbis_table.attach bis_kk_button , 5,6,1,2
-      vonbis_table.attach bis_entry     , 6,7,1,2
-      vonbis_table.attach bis_gg_button , 7,8,1,2
-      vonbis_table.attach bis_g_button  , 8,9,1,2
+      vonbis_table.attach von_k_button  , 0, 1,1,2
+      vonbis_table.attach von_kk_button , 1, 2,1,2
+      vonbis_table.attach von_entry     , 2, 3,1,2
+      vonbis_table.attach von_gg_button , 3, 4,1,2
+      vonbis_table.attach von_g_button  , 4, 5,1,2
+      vonbis_table.attach bis_k_button  , 5, 6,1,2
+      vonbis_table.attach bis_kk_button , 6, 7,1,2
+      vonbis_table.attach bis_entry     , 7, 8,1,2
+      vonbis_table.attach bis_gg_button , 8, 9,1,2
+      vonbis_table.attach bis_g_button  , 9,10,1,2
 
       #### JOBS
       
