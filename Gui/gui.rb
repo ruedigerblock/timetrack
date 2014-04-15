@@ -13,10 +13,9 @@ module Gui
     def init_ui
       set_title "timetracking"
       self.resizable=(false)
-      puts resizable?
-      @width, @height=default_size
-      
+     
       signal_connect "destroy" do
+        test
         Gtk.main_quit
       end
 
@@ -29,80 +28,84 @@ module Gui
       calendar.show_week_numbers=true
       calendar.show_day_names=true
 
+      @von_entry = Gtk::Entry.new
+      @pause_entry = Gtk::Entry.new
+      @bis_entry = Gtk::Entry.new
+      
+      @data = Array.new
+      Gui::IO.load_data calendar.year
+
       date_label = Gtk::Label.new
       calendar.signal_connect "day-selected" do
         d = calendar.date
         date = Date.new(d[0],d[1],d[2])
         date_label.set_markup("<big><b>#{date.strftime('%A %d %B %Y')}</b></big>")
+        dayoftheyear=date.strftime('%j').to_i
+        @data[dayoftheyear]="#{date}§#{@von_entry.text}"
+        puts @data[dayoftheyear]
+
       end
 
       calendar.day=calendar.day
 
-      #### IO
-
-      data = Array.new
-      data = Gui::IO.load_data calendar.year
-
-      puts data
-
       #### VON-BIS TABLE
       vonbis_table = Gtk::Table.new(6,6, false)
 
-      von_label = Gtk::Label.new "von"      
-      von_entry     = Gtk::Entry.new
-      von_entry.max_length=5
-      von_entry.text="8.5"
-      von_entry.width_chars=5
-      von_gg_button = Button.new ">>" ,von_entry
-      von_k_button  = Button.new "<"  ,von_entry
-      von_kk_button = Button.new "<<" ,von_entry
-      von_g_button  = Button.new ">"  ,von_entry
+      @von_label = Gtk::Label.new "von"      
+      @von_entry     = Gtk::Entry.new
+      @von_entry.max_length=5
+      @von_entry.text="8.5"
+      @von_entry.width_chars=5
+      @von_gg_button = Button.new ">>" , @von_entry
+      @von_k_button  = Button.new "<"  , @von_entry
+      @von_kk_button = Button.new "<<" , @von_entry
+      @von_g_button  = Button.new ">"  , @von_entry
 
-      pause_label = Gtk::Label.new "pause"
-      pause_entry = Gtk::Entry.new
-      pause_entry.max_length=5
-      pause_entry.text="0.5"
-      pause_entry.width_chars=5
-      pause_gg_button = Button.new ">>" ,pause_entry
-      pause_k_button  = Button.new "<"  ,pause_entry
-      pause_kk_button = Button.new "<<" ,pause_entry
-      pause_g_button  = Button.new ">"  ,pause_entry
+      @pause_label = Gtk::Label.new "pause"
+      @pause_entry = Gtk::Entry.new
+      @pause_entry.max_length=5
+      @pause_entry.text="0.5"
+      @pause_entry.width_chars=5
+      @pause_gg_button = Button.new ">>" , @pause_entry
+      @pause_k_button  = Button.new "<"   , @pause_entry
+      @pause_kk_button = Button.new "<<" , @pause_entry
+      @pause_g_button  = Button.new ">"  , @pause_entry
 
-      bis_label = Gtk::Label.new "bis"
-      bis_entry     = Gtk::Entry.new
-      bis_entry.max_length=5
-      bis_entry.text="17.0"
-      bis_entry.width_chars=5
-      bis_gg_button = Button.new ">>" ,bis_entry
-      bis_k_button  = Button.new "<"  ,bis_entry
-      bis_kk_button = Button.new "<<" ,bis_entry
-      bis_g_button  = Button.new ">"  ,bis_entry
+      @bis_label = Gtk::Label.new "bis"
+      @bis_entry     = Gtk::Entry.new
+      @bis_entry.max_length=5
+      @bis_entry.text="17.0"
+      @bis_entry.width_chars=5
+      @bis_gg_button = Button.new ">>" , @bis_entry
+      @bis_k_button  = Button.new "<"  , @bis_entry
+      @bis_kk_button = Button.new "<<" , @bis_entry
+      @bis_g_button  = Button.new ">"  , @bis_entry
 
-      expand        = Gtk::Label.new 
+      @expand        = Gtk::Label.new 
 
       vonbis_table.attach date_label    ,0,5,0,1
-      vonbis_table.attach von_label     ,0,5,1,2
-      vonbis_table.attach von_k_button  ,0,1,2,3
-      vonbis_table.attach von_kk_button ,1,2,2,3
-      vonbis_table.attach von_entry     ,2,3,2,3
-      vonbis_table.attach von_gg_button ,3,4,2,3
-      vonbis_table.attach von_g_button  ,4,5,2,3
+      vonbis_table.attach @von_label     ,0,5,1,2
+      vonbis_table.attach @von_k_button  ,0,1,2,3
+      vonbis_table.attach @von_kk_button ,1,2,2,3
+      vonbis_table.attach @von_entry     ,2,3,2,3
+      vonbis_table.attach @von_gg_button ,3,4,2,3
+      vonbis_table.attach @von_g_button  ,4,5,2,3
       
-      vonbis_table.attach pause_label     ,0,5,3,4
-      vonbis_table.attach pause_k_button  ,0,1,4,5
-      vonbis_table.attach pause_kk_button ,1,2,4,5
-      vonbis_table.attach pause_entry     ,2,3,4,5
-      vonbis_table.attach pause_gg_button ,3,4,4,5
-      vonbis_table.attach pause_g_button  ,4,5,4,5
+      vonbis_table.attach @pause_label     ,0,5,3,4
+      vonbis_table.attach @pause_k_button  ,0,1,4,5
+      vonbis_table.attach @pause_kk_button ,1,2,4,5
+      vonbis_table.attach @pause_entry     ,2,3,4,5
+      vonbis_table.attach @pause_gg_button ,3,4,4,5
+      vonbis_table.attach @pause_g_button  ,4,5,4,5
       
-      vonbis_table.attach bis_label     ,0,5,5,6
-      vonbis_table.attach bis_k_button  ,0,1,6,7
-      vonbis_table.attach bis_kk_button ,1,2,6,7
-      vonbis_table.attach bis_entry     ,2,3,6,7
-      vonbis_table.attach bis_gg_button ,3,4,6,7
-      vonbis_table.attach bis_g_button  ,4,5,6,7
+      vonbis_table.attach @bis_label     ,0,5,5,6
+      vonbis_table.attach @bis_k_button  ,0,1,6,7
+      vonbis_table.attach @bis_kk_button ,1,2,6,7
+      vonbis_table.attach @bis_entry     ,2,3,6,7
+      vonbis_table.attach @bis_gg_button ,3,4,6,7
+      vonbis_table.attach @bis_g_button  ,4,5,6,7
 
-      vonbis_table.attach expand        ,0,1,7,8
+      vonbis_table.attach @expand        ,0,1,7,8
     
 
       #### TASKS
@@ -144,6 +147,10 @@ module Gui
         @task_table.resize(@task_table.n_rows-1,1)
         self.set_default_size @width,@height
       end
+    end
+
+    def test
+      
     end
 
   end
