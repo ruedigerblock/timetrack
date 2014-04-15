@@ -38,6 +38,13 @@ module Gui
 
       calendar.day=calendar.day
 
+      #### IO
+
+      data = Array.new
+      data = Gui::IO.load_data calendar.year
+
+      puts data
+
       #### VON-BIS TABLE
       vonbis_table = Gtk::Table.new(6,6, false)
 
