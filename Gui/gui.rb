@@ -16,6 +16,7 @@ module Gui
         Gtk.main_quit
       end
 
+      hbox = Gtk::HBox.new(true, 0)
       vbox = Gtk::VBox.new(false, 0)
       
       #### CALENDAR
@@ -23,102 +24,96 @@ module Gui
       calendar.show_heading=true
       calendar.show_week_numbers=true
       calendar.show_day_names=true
-      puts calendar.style
 
       #### DATE
 
-        puts calendar.inspect
 #      date = Date.new(calendar.date.to_a)
 #      puts date
       
       #### VON-BIS TABLE
-      vonbis_table = Gtk::Table.new(7,1, false)
-      von_label = Gtk::Label.new "von"
-      bis_label = Gtk::Label.new "bis"
+      vonbis_table = Gtk::Table.new(6,6, false)
 
+      d = calendar.date
+      date = Date.new(d[0],d[1],d[2])
+      date_label = Gtk::Label.new
+      date_label.set_markup("<big><b>#{date.strftime('%A %d %B %Y')}</b></big>")
+
+      von_label = Gtk::Label.new "von"
       von_entry     = Gtk::Entry.new
-      von_k_button = Button.new "<",von_entry
-      von_kk_button = Button.new "<<",von_entry
       von_entry.max_length=5
       von_entry.text="8.5"
       von_entry.width_chars=5
-      von_gg_button = Button.new ">>",von_entry
-      von_g_button = Button.new ">",von_entry
+      von_gg_button = Button.new ">>" ,von_entry
+      von_k_button  = Button.new "<"  ,von_entry
+      von_kk_button = Button.new "<<" ,von_entry
+      von_g_button  = Button.new ">"  ,von_entry
+
+      pause_label = Gtk::Label.new "pause"
+      pause_entry = Gtk::Entry.new
+      pause_entry.max_length=5
+      pause_entry.text="0.5"
+      pause_entry.width_chars=5
+      pause_gg_button = Button.new ">>" ,pause_entry
+      pause_k_button  = Button.new "<"  ,pause_entry
+      pause_kk_button = Button.new "<<" ,pause_entry
+      pause_g_button  = Button.new ">"  ,pause_entry
+
+      bis_label = Gtk::Label.new "bis"
       bis_entry     = Gtk::Entry.new
-      bis_k_button = Button.new "<",bis_entry
-      bis_kk_button = Button.new "<<",bis_entry
       bis_entry.max_length=5
       bis_entry.text="17.0"
       bis_entry.width_chars=5
-      bis_gg_button = Button.new ">>",bis_entry
-      bis_g_button = Button.new ">",bis_entry
+      bis_gg_button = Button.new ">>" ,bis_entry
+      bis_k_button  = Button.new "<"  ,bis_entry
+      bis_kk_button = Button.new "<<" ,bis_entry
+      bis_g_button  = Button.new ">"  ,bis_entry
 
-      vonbis_table.attach von_label, 1,2,0,1
-      vonbis_table.attach bis_label, 4,5,0,1
-      vonbis_table.attach von_k_button  , 0, 1,1,2
-      vonbis_table.attach von_kk_button , 1, 2,1,2
-      vonbis_table.attach von_entry     , 2, 3,1,2
-      vonbis_table.attach von_gg_button , 3, 4,1,2
-      vonbis_table.attach von_g_button  , 4, 5,1,2
-      vonbis_table.attach bis_k_button  , 5, 6,1,2
-      vonbis_table.attach bis_kk_button , 6, 7,1,2
-      vonbis_table.attach bis_entry     , 7, 8,1,2
-      vonbis_table.attach bis_gg_button , 8, 9,1,2
-      vonbis_table.attach bis_g_button  , 9,10,1,2
+      expand        = Gtk::Label.new 
+      expand1        = Gtk::Label.new 
 
-      #### JOBS
+      vonbis_table.attach date_label    ,0,5,0,1
+      vonbis_table.attach von_label     ,0,5,1,2
+      vonbis_table.attach von_k_button  ,0,1,2,3
+      vonbis_table.attach von_kk_button ,1,2,2,3
+      vonbis_table.attach von_entry     ,2,3,2,3
+      vonbis_table.attach von_gg_button ,3,4,2,3
+      vonbis_table.attach von_g_button  ,4,5,2,3
       
-      job_table = Gtk::Table.new(5,1, false)
-      job_name = Gtk::Entry.new
-      job_zeit = Gtk::Entry.new
-      job_k_button = Button.new "<", job_zeit
-      job_kk_button = Button.new "<<",job_zeit
-      job_zeit.max_length=5
-      job_zeit.text="0,00"
-      job_zeit.width_chars=5
-      job_gg_button = Button.new ">>",job_zeit
-      job_g_button = Button.new ">",job_zeit
+      vonbis_table.attach pause_label     ,0,5,3,4
+      vonbis_table.attach pause_k_button  ,0,1,4,5
+      vonbis_table.attach pause_kk_button ,1,2,4,5
+      vonbis_table.attach pause_entry     ,2,3,4,5
+      vonbis_table.attach pause_gg_button ,3,4,4,5
+      vonbis_table.attach pause_g_button  ,4,5,4,5
+      
+      vonbis_table.attach bis_label     ,0,5,5,6
+      vonbis_table.attach bis_k_button  ,0,1,6,7
+      vonbis_table.attach bis_kk_button ,1,2,6,7
+      vonbis_table.attach bis_entry     ,2,3,6,7
+      vonbis_table.attach bis_gg_button ,3,4,6,7
+      vonbis_table.attach bis_g_button  ,4,5,6,7
 
-      job_table.attach job_name, 0,1,0,1
-      job_table.attach job_k_button, 1,2,0,1
-      job_table.attach job_kk_button, 2,3,0,1
-      job_table.attach job_zeit, 3,4,0,1
-      job_table.attach job_gg_button, 4,5,0,1
-      job_table.attach job_g_button, 5,6,0,1
+      vonbis_table.attach expand        ,0,1,7,8
+    
 
-      vbox.pack_start calendar, true, true, 0
-      vbox.pack_start vonbis_table, true, true, 0
-      vbox.pack_start job_table, true, true, 0
+      #### TASKS
+      
+      task_table = Gtk::Table.new(5,1, false)
+      
+      task = Task.new
+      task1 = Task.new
+
+      task_table.attach task.get_task_table, 0,1,0,1
+      task_table.attach task1.get_task_table, 0,1,1,2
+
+      hbox.pack_start calendar, false, true, 0
+      hbox.pack_start vonbis_table, false, true, 0
+
+      vbox.pack_start hbox, true, true, 0
+      vbox.pack_start task_table, true, true, 0
 
       add vbox
 
-    end
-
-  end
-
-  class Button < Gtk::Button
-    def initialize (text,entry)
-      super (text)
-      @entry = entry
-
-      self.signal_connect "clicked" do
-        adder = case self.label
-         when "<" then "-0.25"
-         when "<<" then "-0.5"
-         when ">" then "0.25"
-         when ">>" then "0.5"
-        end
-      
-        result = (@entry.text.to_f+adder.to_f)
-        if result >= 0
-          @entry.text=result.to_s
-        end
-      end
-        
-    end
-
-    def get_f
-      puts f
     end
 
   end
