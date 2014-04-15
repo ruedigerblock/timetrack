@@ -8,6 +8,8 @@ module Gui
       init_ui
       show_all
 
+      @width, @height=default_size
+
     end
 
     def init_ui
@@ -15,44 +17,40 @@ module Gui
       self.resizable=(false)
      
       signal_connect "destroy" do
-        test
         Gtk.main_quit
+        self.write_data 
       end
 
       hbox = Gtk::HBox.new(true, 0)
       vbox = Gtk::VBox.new(false, 0)
       
       #### CALENDAR
-      calendar = Gtk::Calendar.new
-      calendar.show_heading=true
-      calendar.show_week_numbers=true
-      calendar.show_day_names=true
+      @calendar = Gtk::Calendar.new
+      @calendar.show_heading=true
+      @calendar.show_week_numbers=true
+      @calendar.show_day_names=true
 
       @von_entry = Gtk::Entry.new
       @pause_entry = Gtk::Entry.new
       @bis_entry = Gtk::Entry.new
       
       @data = Array.new
-      Gui::IO.load_data calendar.year
+      @data = Gui::IO.load_data @calendar.year
 
       date_label = Gtk::Label.new
-      calendar.signal_connect "day-selected" do
-        d = calendar.date
+      @calendar.signal_connect "day-selected" do
+        d = @calendar.date
         date = Date.new(d[0],d[1],d[2])
         date_label.set_markup("<big><b>#{date.strftime('%A %d %B %Y')}</b></big>")
-        dayoftheyear=date.strftime('%j').to_i
-        @data[dayoftheyear]="#{date}§#{@von_entry.text}"
-        puts @data[dayoftheyear]
-
       end
 
-      calendar.day=calendar.day
+      @calendar.day=@calendar.day
 
       #### VON-BIS TABLE
       vonbis_table = Gtk::Table.new(6,6, false)
 
       @von_label = Gtk::Label.new "von"      
-      @von_entry     = Gtk::Entry.new
+      @von_entry = Gtk::Entry.new
       @von_entry.max_length=5
       @von_entry.text="8.5"
       @von_entry.width_chars=5
@@ -67,7 +65,7 @@ module Gui
       @pause_entry.text="0.5"
       @pause_entry.width_chars=5
       @pause_gg_button = Button.new ">>" , @pause_entry
-      @pause_k_button  = Button.new "<"   , @pause_entry
+      @pause_k_button  = Button.new "<"  , @pause_entry
       @pause_kk_button = Button.new "<<" , @pause_entry
       @pause_g_button  = Button.new ">"  , @pause_entry
 
@@ -111,7 +109,7 @@ module Gui
       #### TASKS
       
       @task_table = Gtk::Table.new(1,7, false)      
-
+      @task_array = Array.new
       create_task(self)
 
       new_task_button = Gtk::Button.new "+"
@@ -119,7 +117,7 @@ module Gui
         create_task(self)
       end
 
-      hbox.pack_start calendar, false, true, 0
+      hbox.pack_start @calendar, false, true, 0
       hbox.pack_start vonbis_table, false, true, 0
 
       vbox.pack_start hbox, true, true, 0
@@ -149,10 +147,36 @@ module Gui
       end
     end
 
-    def test
-      
-    end
+    def update_data
+      d = @calendar.date
+      date = Date.new(d[0],d[1],d[2])
+      dayoftheyear=date.strftime('%j').to_i
+      jobs = Array.new
+      @task_table.each do |child|
+        a = Array.new
+        child.each do |c|
+          a<<c
+        end
+        proj = a[6].text_column
+        job  = a[5].text
+        dur  = a[2].text
+        jobs << "#{proj}§"
+        jobs << "#{job}§"
+        jobs << "#{dur}§"
+      end
+      @data[dayoftheyear-1]="#{date}§#{@von_entry.text}§#{@pause_entry.text}§#{@bis_entry.text}§#{jobs.join(',').gsub(',','')}"
 
+      puts @data[dayoftheyear-1]
+    end
+    def write_data
+      file = "2014.db"
+      output = File.new(file,'w')
+      @data.each_with_index do |w,i|
+        puts i
+        output.puts "#{@data[i]}"
+      end
+      output.close
+    end
   end
 
 end

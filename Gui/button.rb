@@ -11,17 +11,15 @@ module Gui
         when ">" then "0.25"
         when ">>" then "0.5"
       end
-
+      
       result = (@entry.text.to_f+adder.to_f)
       if result >= 0
         @entry.text=result.to_s
       end
+      @entry.parent.parent.parent.parent.update_data
     end
 
-  end                                                                                                           
 
-  def get_f
-    puts f
   end
 
   end
