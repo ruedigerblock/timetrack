@@ -12,6 +12,10 @@ module Gui
 
     def init_ui
       set_title "timetracking"
+      self.resizable=(false)
+      puts resizable?
+      @width, @height=default_size
+      
       signal_connect "destroy" do
         Gtk.main_quit
       end
@@ -25,20 +29,19 @@ module Gui
       calendar.show_week_numbers=true
       calendar.show_day_names=true
 
-      #### DATE
+      date_label = Gtk::Label.new
+      calendar.signal_connect "day-selected" do
+        d = calendar.date
+        date = Date.new(d[0],d[1],d[2])
+        date_label.set_markup("<big><b>#{date.strftime('%A %d %B %Y')}</b></big>")
+      end
 
-#      date = Date.new(calendar.date.to_a)
-#      puts date
-      
+      calendar.day=calendar.day
+
       #### VON-BIS TABLE
       vonbis_table = Gtk::Table.new(6,6, false)
 
-      d = calendar.date
-      date = Date.new(d[0],d[1],d[2])
-      date_label = Gtk::Label.new
-      date_label.set_markup("<big><b>#{date.strftime('%A %d %B %Y')}</b></big>")
-
-      von_label = Gtk::Label.new "von"
+      von_label = Gtk::Label.new "von"      
       von_entry     = Gtk::Entry.new
       von_entry.max_length=5
       von_entry.text="8.5"
@@ -69,7 +72,6 @@ module Gui
       bis_g_button  = Button.new ">"  ,bis_entry
 
       expand        = Gtk::Label.new 
-      expand1        = Gtk::Label.new 
 
       vonbis_table.attach date_label    ,0,5,0,1
       vonbis_table.attach von_label     ,0,5,1,2
@@ -98,22 +100,43 @@ module Gui
 
       #### TASKS
       
-      task_table = Gtk::Table.new(5,1, false)
-      
-      task = Task.new
-      task1 = Task.new
+      @task_table = Gtk::Table.new(1,7, false)      
 
-      task_table.attach task.get_task_table, 0,1,0,1
-      task_table.attach task1.get_task_table, 0,1,1,2
+      create_task(self)
+
+      new_task_button = Gtk::Button.new "+"
+      new_task_button.signal_connect "clicked" do
+        create_task(self)
+      end
 
       hbox.pack_start calendar, false, true, 0
       hbox.pack_start vonbis_table, false, true, 0
 
       vbox.pack_start hbox, true, true, 0
-      vbox.pack_start task_table, true, true, 0
+      vbox.pack_start @task_table, true, true, 0
+      vbox.pack_start new_task_button, true, true, 0
 
       add vbox
 
+    end
+
+    def create_task(window)
+      task = Task.new(window)
+      n = @task_table.n_rows
+      @task_table.attach task.get_task_table, 0,1,n,n+1
+    end  
+
+    def remove_task(task)
+      count = -1
+      @task_table.each do
+        count+=1
+      end
+      
+      if count > 0
+        @task_table.remove(task)
+        @task_table.resize(@task_table.n_rows-1,1)
+        self.set_default_size @width,@height
+      end
     end
 
   end
