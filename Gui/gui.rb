@@ -18,7 +18,7 @@ module Gui
      
       signal_connect "destroy" do
         Gtk.main_quit
-        self.write_data 
+        Gui::IO.write_data @calendar.year,@data
       end
 
       hbox = Gtk::HBox.new(true, 0)
@@ -29,6 +29,8 @@ module Gui
       @calendar.show_heading=true
       @calendar.show_week_numbers=true
       @calendar.show_day_names=true
+
+      #### Entry
 
       @von_entry = Gtk::Entry.new
       @pause_entry = Gtk::Entry.new
@@ -105,12 +107,10 @@ module Gui
 
       vonbis_table.attach @expand        ,0,1,7,8
     
-
       #### TASKS
       
       @task_table = Gtk::Table.new(1,7, false)      
       @task_array = Array.new
-      create_task(self)
 
       new_task_button = Gtk::Button.new "+"
       new_task_button.signal_connect "clicked" do
@@ -139,12 +139,9 @@ module Gui
       @task_table.each do
         count+=1
       end
-      
-      if count > 0
-        @task_table.remove(task)
-        @task_table.resize(@task_table.n_rows-1,1)
-        self.set_default_size @width,@height
-      end
+      @task_table.remove(task)
+      @task_table.resize(@task_table.n_rows-1,1)
+      self.set_default_size @width,@height
     end
 
     def update_data
@@ -157,7 +154,7 @@ module Gui
         child.each do |c|
           a<<c
         end
-        proj = a[6].text_column
+        proj = a[6].active_text
         job  = a[5].text
         dur  = a[2].text
         jobs << "#{proj}§"
@@ -166,16 +163,6 @@ module Gui
       end
       @data[dayoftheyear-1]="#{date}§#{@von_entry.text}§#{@pause_entry.text}§#{@bis_entry.text}§#{jobs.join(',').gsub(',','')}"
 
-      puts @data[dayoftheyear-1]
-    end
-    def write_data
-      file = "2014.db"
-      output = File.new(file,'w')
-      @data.each_with_index do |w,i|
-        puts i
-        output.puts "#{@data[i]}"
-      end
-      output.close
     end
   end
 

@@ -24,5 +24,17 @@ module Gui::IO
     return data
 
   end
+
+  def self.write_data(year,data)
+    
+    @data = data
+    file = "#{year}.db"
+
+    output = File.new(file, 'w')
+    data.each_with_index do |w,i|
+      output.puts "#{@data[i]}"
+    end
+    output.close
+  end
 end
 
