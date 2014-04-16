@@ -13,7 +13,7 @@ module Gui
     end
 
     def init_ui
-      set_title "timetracking"
+      set_title "timetrack"
       self.resizable=(false)
      
       signal_connect "destroy" do
