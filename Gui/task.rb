@@ -1,17 +1,22 @@
 module Gui 
   class Task
-    def initialize(w)
+    def initialize(w,proj=nil,text=nil,dur=nil)
       @window = w
+      @proj = proj
+      @text = text
+      @dur = dur
+
       @task_table = Gtk::Table.new(1, 6, false)
       task_remover    = Gtk::Button.new "-"
       task_proj_combo = Gtk::ComboBoxEntry.new(true)
       task_proj_combo.child.max_length=7
       task_proj_combo.child.width_chars=7
       task_name_entry = Gtk::Entry.new
+      task_name_entry.text=@text
       task_zeit_entry = Gtk::Entry.new
+      task_zeit_entry.text=@dur
       task_zeit_entry.max_length = 5
       task_zeit_entry.width_chars = 5
-      task_zeit_entry.text = "0.00"
       task_k_button   = Button.new "<"   , task_zeit_entry
       task_kk_button  = Button.new "<<"  , task_zeit_entry
       task_gg_button  = Button.new ">>"  , task_zeit_entry

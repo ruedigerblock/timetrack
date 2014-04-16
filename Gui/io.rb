@@ -6,10 +6,17 @@ module Gui::IO
     unless File.exists?(file)
       output = File.new(file, "w")
       date = Date.new(year)
-      puts date
       365.times do
         if date.year == year
-          output.puts "#{date}"
+          day=date.strftime('%A')
+
+          string = case day
+                   when "Saturday" then "#{date}§§§§"
+                   when "Sunday" then "#{date}§§§§"
+                   else "#{date}§8.5§0.5§17.0§"
+          end
+
+          output.puts string
           date+=1
         end
       end
