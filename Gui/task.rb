@@ -8,9 +8,8 @@ module Gui
 
       @task_table = Gtk::Table.new(1, 6, false)
       task_remover    = Gtk::Button.new "-"
-      task_proj_combo = Gtk::ComboBoxEntry.new(true)
-      task_proj_combo.child.max_length=7
-      task_proj_combo.child.width_chars=7
+      @task_proj_combo = Gtk::ComboBoxEntry.new(true)
+      fill_task_proj_combo
       task_name_entry = Gtk::Entry.new
       task_name_entry.text=@text
       task_zeit_entry = Gtk::Entry.new
@@ -22,7 +21,7 @@ module Gui
       task_gg_button  = Button.new ">>"  , task_zeit_entry
       task_g_button   = Button.new ">"   , task_zeit_entry
       @task_table.attach task_remover    , 0, 1, 0, 1
-      @task_table.attach task_proj_combo , 1, 2, 0, 1
+      @task_table.attach @task_proj_combo , 1, 2, 0, 1
       @task_table.attach task_name_entry , 2, 3, 0, 1
       @task_table.attach task_k_button   , 3, 4, 0, 1
       @task_table.attach task_kk_button  , 4, 5, 0, 1
@@ -34,12 +33,14 @@ module Gui
         @window.remove_task(@task_table)
       end
 
-      task_proj_combo.signal_connect "changed" do
-        puts task_proj_combo.active_text
+      @task_proj_combo.set_active_text "VIDAR"
+
+      @task_proj_combo.signal_connect "changed" do
+        puts @task_proj_combo.active_text
       end
 
-      task_proj_combo.child.signal_connect "activate" do
-        task_proj_combo.append_text task_proj_combo.active_text
+      @task_proj_combo.child.signal_connect "activate" do
+        @task_proj_combo.append_text task_proj_combo.active_text
       end
 
       task_name_entry.signal_connect "activate" do
@@ -52,7 +53,17 @@ module Gui
       @task_table.show
 
     end
-    
+   
+    def fill_task_proj_combo
+      @task_proj_combo.child.max_length=7
+      @task_proj_combo.child.width_chars=7
+      file = "timetrack.conf"
+        input = File.open (file)
+        File.readlines(file).each do |line|
+          @task_proj_combo.append_text line.chomp
+        end
+    end
+
     def get_task_table
       return @task_table
     end
