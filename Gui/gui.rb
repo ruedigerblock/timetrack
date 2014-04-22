@@ -18,6 +18,7 @@ module Gui
      
       signal_connect "destroy" do
         Gtk.main_quit
+        update_data
         Gui::IO.write_data @calendar.year,@data
       end
 
@@ -129,7 +130,7 @@ module Gui
 
     end
 
-    def create_task(window,proj=nil,text=nil,dur=nil)
+    def create_task(window,proj=nil,text="",dur="0.0")
       task = Task.new(window,proj,text,dur)
       n = @task_table.n_rows
       @task_table.attach task.get_task_table, 0,1,n,n+1
