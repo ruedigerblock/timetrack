@@ -15,7 +15,7 @@ module Gui
     def init_ui
       set_title "timetrack"
       self.resizable=(false)
-     
+
       signal_connect "destroy" do
         Gtk.main_quit
         update_data
@@ -49,8 +49,9 @@ module Gui
         day_label.set_markup("<big><b>#{date.strftime('%A')}</b></big>")
         date_label.set_markup("<big><b>#{date.strftime('%d %B %Y')}</b></big>")
         update_von_bis date
+        update_summe
         delete_tasks
-        add_tasks date  
+        add_tasks date 
       end
 
       #### VON-BIS TABLE
@@ -83,7 +84,7 @@ module Gui
       @bis_kk_button = Button.new "<<" , @bis_entry
       @bis_g_button  = Button.new ">"  , @bis_entry
 
-      @expand        = Gtk::Label.new 
+      @summe        = Gtk::Label.new 
 
       vonbis_table.attach day_label      ,0,5,0,1
       vonbis_table.attach date_label     ,0,5,1,2
@@ -107,6 +108,8 @@ module Gui
       vonbis_table.attach @bis_entry     ,2,3,7,8
       vonbis_table.attach @bis_gg_button ,3,4,7,8
       vonbis_table.attach @bis_g_button  ,4,5,7,8
+      
+      vonbis_table.attach @summe  ,0,5,8,9
 
       #### TASKS
       
@@ -172,6 +175,8 @@ module Gui
         jobs << "#{dur}§"
       end
       @data[dayoftheyear-1]="#{date}§#{@von_entry.text}§#{@pause_entry.text}§#{@bis_entry.text}§#{jobs.join(',').gsub(',','')}"
+  
+      update_summe
     end
 
     def update_von_bis(date)
@@ -180,6 +185,17 @@ module Gui
       @von_entry.text   = day_array[1].to_s.chomp
       @pause_entry.text = day_array[2].to_s.chomp
       @bis_entry.text   = day_array[3].to_s.chomp
+    end
+
+    def update_summe
+        summe = @bis_entry.text.to_f - @von_entry.text.to_f - @pause_entry.text.to_f
+        case
+          when summe < 8 then color = "red"
+          else color = "green"
+        end
+        
+        @summe.set_markup("<big><b><span foreground='#{color}'>#{summe}</span></b></big>")
+
     end
 
     def delete_tasks
