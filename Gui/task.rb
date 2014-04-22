@@ -1,6 +1,6 @@
 module Gui 
   class Task
-    def initialize(w,proj=nil,text=nil,dur=nil)
+    def initialize(w,proj=nil,text="",dur=0)
       @window = w
       @proj = proj
       @text = text
@@ -33,10 +33,8 @@ module Gui
         @window.remove_task(@task_table)
       end
 
-      @task_proj_combo.set_active_text "VIDAR"
-
       @task_proj_combo.signal_connect "changed" do
-        puts @task_proj_combo.active_text
+#        puts @task_proj_combo.active_text
       end
 
       @task_proj_combo.child.signal_connect "activate" do
@@ -51,6 +49,12 @@ module Gui
       end
 
       @task_table.show
+
+      @task_proj_combo.model.each do |model,path,iter|
+        if ( model.get_value(iter,0) == proj ) 
+          @task_proj_combo.active_iter=(iter)
+        end
+      end
 
     end
    
