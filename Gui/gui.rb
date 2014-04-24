@@ -117,6 +117,7 @@ module Gui
       @task_array = Array.new
 
       new_task_button = Gtk::Button.new "+"
+      new_task_button.set_size_request 450,31
       new_task_button.signal_connect "clicked" do
         create_task(self)
       end
