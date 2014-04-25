@@ -41,17 +41,16 @@ module Gui
       @data = Array.new
       @data = Gui::IO.load_data @calendar.year
 
-      day_label  = Gtk::Label.new
-      date_label = Gtk::Label.new
       @calendar.signal_connect "day-selected" do
         d = @calendar.date
         date = Date.new(d[0],d[1],d[2])
-        day_label.set_markup("<big><b>#{date.strftime('%A')}</b></big>")
-        date_label.set_markup("<big><b>#{date.strftime('%d %B %Y')}</b></big>")
+        day =  date.strftime('%A')
+        datum = date.strftime('%d %B %Y')
+        self.set_title "#{day} #{datum}"
         update_von_bis date
         update_summe
         delete_tasks
-        add_tasks date 
+        add_tasks date
       end
 
       #### VON-BIS TABLE
@@ -65,7 +64,6 @@ module Gui
       @von_k_button  = Button.new "<"  , @von_entry
       @von_kk_button = Button.new "<<" , @von_entry
       @von_g_button  = Button.new ">"  , @von_entry
-
       @pause_label = Gtk::Label.new "pause"
       @pause_entry = Gtk::Entry.new
       @pause_entry.max_length=5
@@ -86,30 +84,28 @@ module Gui
 
       @summe        = Gtk::Label.new 
 
-      vonbis_table.attach day_label      ,0,5,0,1
-      vonbis_table.attach date_label     ,0,5,1,2
-      vonbis_table.attach @von_label     ,0,5,2,3
-      vonbis_table.attach @von_k_button  ,0,1,3,4
-      vonbis_table.attach @von_kk_button ,1,2,3,4
-      vonbis_table.attach @von_entry     ,2,3,3,4
-      vonbis_table.attach @von_gg_button ,3,4,3,4
-      vonbis_table.attach @von_g_button  ,4,5,3,4
+      vonbis_table.attach @von_label     ,0,5,0,1
+      vonbis_table.attach @von_k_button  ,0,1,1,2
+      vonbis_table.attach @von_kk_button ,1,2,1,2
+      vonbis_table.attach @von_entry     ,2,3,1,2
+      vonbis_table.attach @von_gg_button ,3,4,1,2
+      vonbis_table.attach @von_g_button  ,4,5,1,2
       
-      vonbis_table.attach @pause_label     ,0,5,4,5
-      vonbis_table.attach @pause_k_button  ,0,1,5,6
-      vonbis_table.attach @pause_kk_button ,1,2,5,6
-      vonbis_table.attach @pause_entry     ,2,3,5,6
-      vonbis_table.attach @pause_gg_button ,3,4,5,6
-      vonbis_table.attach @pause_g_button  ,4,5,5,6
+      vonbis_table.attach @pause_label     ,0,5,2,3
+      vonbis_table.attach @pause_k_button  ,0,1,3,4
+      vonbis_table.attach @pause_kk_button ,1,2,3,4
+      vonbis_table.attach @pause_entry     ,2,3,3,4
+      vonbis_table.attach @pause_gg_button ,3,4,3,4
+      vonbis_table.attach @pause_g_button  ,4,5,3,4
       
-      vonbis_table.attach @bis_label     ,0,5,6,7
-      vonbis_table.attach @bis_k_button  ,0,1,7,8
-      vonbis_table.attach @bis_kk_button ,1,2,7,8
-      vonbis_table.attach @bis_entry     ,2,3,7,8
-      vonbis_table.attach @bis_gg_button ,3,4,7,8
-      vonbis_table.attach @bis_g_button  ,4,5,7,8
+      vonbis_table.attach @bis_label     ,0,5,4,5
+      vonbis_table.attach @bis_k_button  ,0,1,5,6
+      vonbis_table.attach @bis_kk_button ,1,2,5,6
+      vonbis_table.attach @bis_entry     ,2,3,5,6
+      vonbis_table.attach @bis_gg_button ,3,4,5,6
+      vonbis_table.attach @bis_g_button  ,4,5,5,6
       
-      vonbis_table.attach @summe  ,0,5,8,9
+    #  vonbis_table.attach @summe  ,0,5,6,7
 
       #### TASKS
       
