@@ -82,7 +82,7 @@ module Gui
       @bis_kk_button = Button.new "<<" , @bis_entry
       @bis_g_button  = Button.new ">"  , @bis_entry
 
-      @summe        = Gtk::Label.new 
+      @summe        = Gtk::Label.new
 
       vonbis_table.attach @von_label     ,0,5,0,1
       vonbis_table.attach @von_k_button  ,0,1,1,2
@@ -104,8 +104,8 @@ module Gui
       vonbis_table.attach @bis_entry     ,2,3,5,6
       vonbis_table.attach @bis_gg_button ,3,4,5,6
       vonbis_table.attach @bis_g_button  ,4,5,5,6
-      
-    #  vonbis_table.attach @summe  ,0,5,6,7
+     
+      vonbis_table.attach @summe  ,0,5,6,7
 
       #### TASKS
       

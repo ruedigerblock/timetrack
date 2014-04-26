@@ -1,8 +1,8 @@
 module Gui 
   class Task
-    def initialize(w,proj=nil,text="",dur=0)
+    def initialize(w,p=nil,text="",dur=0)
       @window = w
-      @proj = proj
+      @project = p
       @text = text
       @dur = dur
 
@@ -49,12 +49,7 @@ module Gui
       end
 
       @task_table.show
-
-      @task_proj_combo.model.each do |model,path,iter|
-        if ( model.get_value(iter,0) == proj ) 
-          @task_proj_combo.active_iter=(iter)
-        end
-      end
+      select_project (@project)
 
     end
    
@@ -66,6 +61,20 @@ module Gui
         File.readlines(file).each do |line|
           @task_proj_combo.append_text line.chomp
         end
+    end
+
+    def select_project(project)
+      success=false
+      @task_proj_combo.model.each do |model,path,iter|
+        if ( model.get_value(iter,0) == project ) 
+          @task_proj_combo.active_iter=(iter)
+          success=true
+        end
+      end
+      if (success==false)
+        @task_proj_combo.append_text project
+      select_project (project)
+      end
     end
 
     def get_task_table
