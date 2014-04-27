@@ -1,49 +1,23 @@
 module Gui::IO
-  def self.load_data(year,config)
+  def self.load_data(year)
 
     file="#{year}.db"
-    @config = config
     unless File.exists?(file)
       output = File.new(file, "w")
-      date = Date.new(year)
-      365.times do
-        if date.year == year
-          day=date.strftime('%A')
-          st = @config['general']['start']
-          br = @config['general']['break']
-          en = @config['general']['end']
-          string = case day
-                   when "Saturday" then "#{date}§§§§"
-                   when "Sunday" then "#{date}§§§§"
-                   else "#{date}§#{st}§#{br}§#{en}§"
-          end
-
-          output.puts string
-          date+=1
-        end
-      end
       output.close
     end
-    input = File.open (file)
-    data=Array.new
-    File.readlines(file).each do |line|
-      data << line
-    end  
     
+    data = YAML.load_file (file)    
+    if data==false 
+      data={}
+    end
     return data
 
   end
 
   def self.write_data(year,data)
-    
-    @data = data
     file = "#{year}.db"
-
-    output = File.new(file, 'w')
-    data.each_with_index do |w,i|
-      output.puts "#{@data[i]}"
-    end
-    output.close
+    File.open(file, 'w') {|f| f.write data.to_yaml}
   end
 
   def self.load_config

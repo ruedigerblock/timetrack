@@ -39,8 +39,7 @@ module Gui
       @pause_entry = Gtk::Entry.new
       @bis_entry = Gtk::Entry.new
       
-      @data = Array.new
-      @data = Gui::IO.load_data @calendar.year,@config
+      @data = Gui::IO.load_data @calendar.year
 
       @calendar.signal_connect "day-selected" do
         d = @calendar.date
@@ -150,8 +149,7 @@ module Gui
     def update_data
       d = @calendar.date
       date = Date.new(d[0],d[1],d[2])
-      dayoftheyear=date.strftime('%j').to_i
-      jobs = Array.new
+      jobs = {}
 
       temp_a = Array.new
       @task_table.each do |child|
@@ -166,33 +164,53 @@ module Gui
           a<<c
         end
         proj = a[6].active_text
-        job  = a[5].text
-        dur  = a[2].text
-        jobs << "#{proj}§"
-        jobs << "#{job}§"
-        jobs << "#{dur}§"
+        text  = a[5].text
+        dura  = a[2].text
+        job = {
+           proj => {
+          'text' => text,
+          'duration' => dura
+          }
+        }
+        jobs.merge!(job)
       end
-      @data[dayoftheyear-1]="#{date}§#{@von_entry.text}§#{@pause_entry.text}§#{@bis_entry.text}§#{jobs.join(',').gsub(',','')}"
-  
-      update_summe
+       @data[date] = {
+         'start' => @von_entry.text,
+         'break' => @pause_entry.text,
+         'end'   => @bis_entry.text,
+         'jobs' => jobs
+       }
+        update_summe
     end
 
     def update_von_bis(date)
-      doty=(date.strftime('%j').to_i)-1
-      day_array=@data[doty].split('§')
-      @von_entry.text   = day_array[1].to_s.chomp
-      @pause_entry.text = day_array[2].to_s.chomp
-      @bis_entry.text   = day_array[3].to_s.chomp
+
+      if !@data[date] 
+          day = {
+            date => {
+              'start' => @config['general']['start'],
+              'break' => @config['general']['break'],
+              'end'   => @config['general']['end'],           
+              'jobs'=> {}
+            }
+          }
+          @data.merge!(day)
+      end
+    
+      @von_entry.text   = @data[date]['start'].to_s.chomp
+      @pause_entry.text = @data[date]['break'].to_s.chomp
+      @bis_entry.text   = @data[date]['end'].to_s.chomp
+
     end
 
     def update_summe
-        summe = @bis_entry.text.to_f - @von_entry.text.to_f - @pause_entry.text.to_f
-        case
-          when summe < 8 then color = "red"
-          else color = "green"
-        end
+      summe = @bis_entry.text.to_f - @von_entry.text.to_f - @pause_entry.text.to_f
+      case
+        when summe < 8 then color = "red"
+        else color = "green"
+      end
         
-        @summe.set_markup("<big><b><span foreground='#{color}'>#{summe}</span></b></big>")
+      @summe.set_markup("<big><b><span foreground='#{color}'>#{summe}</span></b></big>")
 
     end
 
@@ -203,11 +221,10 @@ module Gui
     end
 
     def add_tasks (date)
-      doty=(date.strftime('%j').to_i)-1
-      day_array=@data[doty].split('§')
-      (4..day_array.size-3).step(3) do |i|
-      create_task self, day_array[i], day_array[i+1], day_array[i+2]
+      @data[date]['jobs'].each do |job|
+        create_task self, job[0], job[1]['text'], job[1]['duration']
       end
+      
     end
       
     def config

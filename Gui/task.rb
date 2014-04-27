@@ -54,7 +54,7 @@ module Gui
     end
    
     def fill_task_proj_combo
-      @task_proj_combo.child.max_length=7
+#      @task_proj_combo.child.max_length=7
       @task_proj_combo.child.width_chars=7
       @window.config['projects'].each do |project|
         @task_proj_combo.append_text project
