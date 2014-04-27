@@ -56,11 +56,9 @@ module Gui
     def fill_task_proj_combo
       @task_proj_combo.child.max_length=7
       @task_proj_combo.child.width_chars=7
-      file = "timetrack.conf"
-        input = File.open (file)
-        File.readlines(file).each do |line|
-          @task_proj_combo.append_text line.chomp
-        end
+      @window.config['projects'].each do |project|
+        @task_proj_combo.append_text project
+      end
     end
 
     def select_project(project)

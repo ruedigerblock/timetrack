@@ -5,10 +5,11 @@ module Gui
     def initialize
       super
 
+      @config=Gui::IO.load_config
+      @width, @height=default_size
+      
       init_ui
       show_all
-
-      @width, @height=default_size
 
     end
 
@@ -39,7 +40,7 @@ module Gui
       @bis_entry = Gtk::Entry.new
       
       @data = Array.new
-      @data = Gui::IO.load_data @calendar.year
+      @data = Gui::IO.load_data @calendar.year,@config
 
       @calendar.signal_connect "day-selected" do
         d = @calendar.date
@@ -209,6 +210,9 @@ module Gui
       end
     end
       
+    def config
+      return @config
+    end
 
   end
 

@@ -2,6 +2,7 @@
 
 require 'gtk2'
 require 'fileutils'
+require 'yaml'
 require './Gui/gui'
 require './Gui/button'
 require './Gui/task'
