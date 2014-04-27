@@ -62,7 +62,6 @@ module Gui
     end
 
     def select_project(project)
-      puts project
       success=false
       @task_proj_combo.model.each do |model,path,iter|
         if ( model.get_value(iter,0) == project ) 
@@ -70,7 +69,7 @@ module Gui
           success=true
         end
       end
-      if (success==false && project != nil)
+      if (success==false && project != "" && project != nil)
         @task_proj_combo.append_text project
       select_project (project)
       end
