@@ -1,5 +1,3 @@
-require 'date'
-
 module Gui
   class Window < Gtk::Window
     def initialize
