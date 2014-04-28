@@ -157,7 +157,7 @@ module Gui
       end
 
       temp_a = temp_a.reverse
-  
+      i=0
       temp_a.each do |child|
         a = Array.new
         child.each do |c|
@@ -167,12 +167,14 @@ module Gui
         text  = a[5].text
         dura  = a[2].text
         job = {
-           proj => {
+            i => {
+          'name' => proj,
           'text' => text,
           'duration' => dura
           }
         }
         jobs.merge!(job)
+        i+=1
       end
        @data[date] = {
          'start' => @von_entry.text,
@@ -222,7 +224,7 @@ module Gui
 
     def add_tasks (date)
       @data[date]['jobs'].each do |job|
-        create_task self, job[0], job[1]['text'], job[1]['duration']
+        create_task self, job[1]['name'], job[1]['text'], job[1]['duration']
       end
       
     end
