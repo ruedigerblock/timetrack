@@ -185,22 +185,28 @@ module Gui
 
     def update_von_bis(date)
 
-      if !@data[date] 
-          day = {
-            date => {
-              'start' => @config['general']['start'],
-              'break' => @config['general']['break'],
-              'end'   => @config['general']['end'],           
-              'jobs'=> {}
-            }
-          }
-          @data.merge!(day)
-      end
-    
-      @von_entry.text   = @data[date]['start'].to_s.chomp
-      @pause_entry.text = @data[date]['break'].to_s.chomp
-      @bis_entry.text   = @data[date]['end'].to_s.chomp
+      dayname=date.strftime('%A')
+      @von_entry.text = ""
+      @pause_entry.text = ""
+      @bis_entry.text = ""
 
+      if !@data[date] and dayname != "Saturday" and dayname != "Sunday"
+        day = {
+          date => {
+            'start' => @config['general']['start'],
+            'break' => @config['general']['break'],
+            'end'   => @config['general']['end'],           
+            'jobs'=> {}
+          }
+        }
+        @data.merge!(day)
+      end
+     
+      if @data[date]
+        @von_entry.text   = @data[date]['start'].to_s.chomp
+        @pause_entry.text = @data[date]['break'].to_s.chomp
+        @bis_entry.text   = @data[date]['end'].to_s.chomp
+      end
     end
 
     def update_summe
@@ -221,10 +227,11 @@ module Gui
     end
 
     def add_tasks (date)
-      @data[date]['jobs'].each do |job|
-        create_task self, job[1]['name'], job[1]['text'], job[1]['duration']
-      end
-      
+      if @data[date]
+        @data[date]['jobs'].each do |job|
+          create_task self, job[1]['name'], job[1]['text'], job[1]['duration']
+        end
+      end    
     end
       
     def config
