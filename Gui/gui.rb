@@ -31,12 +31,6 @@ module Gui
       @calendar.show_week_numbers=true
       @calendar.show_day_names=true
 
-      #### Entry
-
-      @von_entry = Gtk::Entry.new
-      @pause_entry = Gtk::Entry.new
-      @bis_entry = Gtk::Entry.new
-      
       @data = Gui::IO.load_data @calendar.year
 
       @calendar.signal_connect "day-selected" do
@@ -55,53 +49,28 @@ module Gui
       vonbis_table = Gtk::Table.new(6,6, false)
 
       @von_label = Gtk::Label.new "von"      
-      @von_entry = Gtk::Entry.new
+      @von_entry = Entry.new
       @von_entry.max_length=5
       @von_entry.width_chars=5
-      @von_gg_button = Button.new ">>" , @von_entry
-      @von_k_button  = Button.new "<"  , @von_entry
-      @von_kk_button = Button.new "<<" , @von_entry
-      @von_g_button  = Button.new ">"  , @von_entry
+
       @pause_label = Gtk::Label.new "pause"
-      @pause_entry = Gtk::Entry.new
+      @pause_entry = Entry.new
       @pause_entry.max_length=5
       @pause_entry.width_chars=5
-      @pause_gg_button = Button.new ">>" , @pause_entry
-      @pause_k_button  = Button.new "<"  , @pause_entry
-      @pause_kk_button = Button.new "<<" , @pause_entry
-      @pause_g_button  = Button.new ">"  , @pause_entry
 
       @bis_label = Gtk::Label.new "bis"
-      @bis_entry     = Gtk::Entry.new
+      @bis_entry     = Entry.new
       @bis_entry.max_length=5
       @bis_entry.width_chars=5
-      @bis_gg_button = Button.new ">>" , @bis_entry
-      @bis_k_button  = Button.new "<"  , @bis_entry
-      @bis_kk_button = Button.new "<<" , @bis_entry
-      @bis_g_button  = Button.new ">"  , @bis_entry
 
       @summe        = Gtk::Label.new
 
-      vonbis_table.attach @von_label     ,0,5,0,1
-      vonbis_table.attach @von_k_button  ,0,1,1,2
-      vonbis_table.attach @von_kk_button ,1,2,1,2
-      vonbis_table.attach @von_entry     ,2,3,1,2
-      vonbis_table.attach @von_gg_button ,3,4,1,2
-      vonbis_table.attach @von_g_button  ,4,5,1,2
-      
-      vonbis_table.attach @pause_label     ,0,5,2,3
-      vonbis_table.attach @pause_k_button  ,0,1,3,4
-      vonbis_table.attach @pause_kk_button ,1,2,3,4
-      vonbis_table.attach @pause_entry     ,2,3,3,4
-      vonbis_table.attach @pause_gg_button ,3,4,3,4
-      vonbis_table.attach @pause_g_button  ,4,5,3,4
-      
-      vonbis_table.attach @bis_label     ,0,5,4,5
-      vonbis_table.attach @bis_k_button  ,0,1,5,6
-      vonbis_table.attach @bis_kk_button ,1,2,5,6
-      vonbis_table.attach @bis_entry     ,2,3,5,6
-      vonbis_table.attach @bis_gg_button ,3,4,5,6
-      vonbis_table.attach @bis_g_button  ,4,5,5,6
+      vonbis_table.attach @von_label     ,0,1,0,1
+      vonbis_table.attach @von_entry     ,1,2,0,1
+      vonbis_table.attach @pause_label   ,0,1,1,2
+      vonbis_table.attach @pause_entry   ,1,2,1,2
+      vonbis_table.attach @bis_label     ,0,1,2,3
+      vonbis_table.attach @bis_entry     ,1,2,2,3
      
       vonbis_table.attach @summe  ,0,5,6,7
 
@@ -161,9 +130,9 @@ module Gui
         child.each do |c|
           a<<c
         end
-        proj = a[6].active_text
-        text  = a[5].text
-        dura  = a[2].text
+        proj = a[2].active_text
+        text  = a[1].text
+        dura  = a[0].text
         job = {
             i => {
           'name' => proj,

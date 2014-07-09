@@ -5,6 +5,7 @@ require 'fileutils'
 require 'yaml'
 require_relative 'Gui/gui'
 require_relative 'Gui/button'
+require_relative 'Gui/entry'
 require_relative 'Gui/task'
 require_relative 'Gui/io'
 
