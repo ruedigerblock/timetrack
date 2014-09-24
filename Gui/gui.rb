@@ -17,85 +17,68 @@ module Gui
 
       signal_connect "destroy" do
         Gtk.main_quit
-        update_data
-        Gui::IO.write_data @calendar.year,@data
+#        update_data
+#        Gui::IO.write_data @calendar.year,@data
       end
 
+      main_table = Gtk::Table.new 0,0
+      add(main_table)
 
-      hbox = Gtk::HBox.new(true, 0)
-      vbox = Gtk::VBox.new(false, 0)
+      header_table = Gtk::Table.new 2,0
       
-      #### CALENDAR
-      @calendar = Gtk::Calendar.new
-      @calendar.show_heading=true
-      @calendar.show_week_numbers=true
-      @calendar.show_day_names=true
-
-      @data = Gui::IO.load_data @calendar.year
-
-      @calendar.signal_connect "day-selected" do
-        d = @calendar.date
-        date = Date.new(d[0],d[1],d[2])
-        day =  date.strftime('%A')
-        datum = date.strftime('%d %B %Y')
-        self.set_title "#{day} #{datum}"
-        update_von_bis date
-        update_summe
-        delete_tasks
-        add_tasks date
-      end
-
-      #### VON-BIS TABLE
-      vonbis_table = Gtk::Table.new(6,6, false)
-
-      @von_label = Gtk::Label.new "von"      
-      @von_entry = Entry.new
-      @von_entry.max_length=5
-      @von_entry.width_chars=5
-
-      @pause_label = Gtk::Label.new "pause"
-      @pause_entry = Entry.new
-      @pause_entry.max_length=5
-      @pause_entry.width_chars=5
-
-      @bis_label = Gtk::Label.new "bis"
-      @bis_entry     = Entry.new
-      @bis_entry.max_length=5
-      @bis_entry.width_chars=5
-
-      @summe        = Gtk::Label.new
-
-      vonbis_table.attach @von_label     ,0,1,0,1
-      vonbis_table.attach @von_entry     ,1,2,0,1
-      vonbis_table.attach @pause_label   ,0,1,1,2
-      vonbis_table.attach @pause_entry   ,1,2,1,2
-      vonbis_table.attach @bis_label     ,0,1,2,3
-      vonbis_table.attach @bis_entry     ,1,2,2,3
-     
-      vonbis_table.attach @summe  ,0,5,6,7
-
-      #### TASKS
+      header_table_left_button = Gtk::Button.new "<"
+      header_table_month_label = Gtk::Label.new ("Month")
+      header_table_year_label = Gtk::Label.new ("Year")
+      header_table_right_button = Gtk::Button.new ">"
       
-      @task_table = Gtk::Table.new(1,7, false)      
-      @task_array = Array.new
+      header_table.attach header_table_left_button, 0, 1, 0, 1
+      header_table.attach header_table_month_label, 1, 2, 0, 1
+      header_table.attach header_table_year_label,  2, 3, 0, 1
+      header_table.attach header_table_right_button,3, 4, 0, 1
 
-      new_task_button = Gtk::Button.new "+"
-      new_task_button.set_size_request 450,31
-      new_task_button.signal_connect "clicked" do
-        create_task(self)
+      main_table.attach header_table, 0, 45, main_table.n_columns, main_table.n_columns+1
+
+      date=DateTime.now
+      first=Date.new(date.year,date.month,1)
+      temp_date=first-first.wday+1
+ 
+      1.step(35,7) do |i|
+        entry = Gtk::Entry.new
+        entry.text=(first+i).strftime("%W")
+        main_table.attach entry, i-1, i+6, main_table.n_columns+1, main_table.n_columns+2
       end
 
-      hbox.pack_start @calendar, false, true, 0
-      hbox.pack_start vonbis_table, false, true, 0
+      35.times do |i|
 
-      vbox.pack_start hbox, true, true, 0
-      vbox.pack_start @task_table, true, true, 0
-      vbox.pack_start new_task_button, true, true, 0
+        label = Gtk::Label.new ((temp_date+i).strftime("%A"))
+        label.angle=90
+        main_table.attach label, i, i+1, main_table.n_columns+2, main_table.n_columns+3
+        
+        day = (temp_date+i).day
+        entry = Gtk::Entry.new
+        entry.text=day.to_s
+        entry.width_chars=2
+        entry.editable=false
+        main_table.attach entry, i, i+1, main_table.n_columns+3, main_table.n_columns+4
 
-      @calendar.day=@calendar.day
-      add vbox
+      end
+
+
 
     end
+
+    def get_thirtyfive_days
+
+      days = Array.new
+      5.times do 
+        Date::DAYNAMES.each do |day|
+          days << day
+        end
+      end
+      days.push days.shift
+      return days 
+    end
+
 
     def create_task(window,proj=nil,text="",dur="0.0")
       task = Task.new(window,proj,text,dur)
