@@ -14,56 +14,78 @@ module Gui
     def init_ui
       set_title "timetrack"
       self.resizable=(false)
-
+      build_ui
       signal_connect "destroy" do
         Gtk.main_quit
 #        update_data
 #        Gui::IO.write_data @calendar.year,@data
       end
 
+    end
+
+    def build_ui
+      date=DateTime.now
       main_table = Gtk::Table.new 0,0
       add(main_table)
 
-      header_table = Gtk::Table.new 2,0
+      main_table_left_button = Gtk::Button.new "<"
+      main_table_month_label = Gtk::Label.new ("Month")
+      main_table_year_label = Gtk::Label.new ("Year")
+      main_table_right_button = Gtk::Button.new ">"
       
-      header_table_left_button = Gtk::Button.new "<"
-      header_table_month_label = Gtk::Label.new ("Month")
-      header_table_year_label = Gtk::Label.new ("Year")
-      header_table_right_button = Gtk::Button.new ">"
-      
-      header_table.attach header_table_left_button, 0, 1, 0, 1
-      header_table.attach header_table_month_label, 1, 2, 0, 1
-      header_table.attach header_table_year_label,  2, 3, 0, 1
-      header_table.attach header_table_right_button,3, 4, 0, 1
+      main_table.attach main_table_left_button, 0, 1, 0, 1
+      main_table.attach main_table_month_label, 1, 2, 0, 1
+      main_table.attach main_table_year_label,  2, 3, 0, 1
+      main_table.attach main_table_right_button,3, 4, 0, 1
 
-      main_table.attach header_table, 0, 45, main_table.n_columns, main_table.n_columns+1
-
-      date=DateTime.now
       first=Date.new(date.year,date.month,1)
       temp_date=first-first.wday+1
  
       1.step(35,7) do |i|
-        entry = Gtk::Entry.new
-        entry.text=(first+i).strftime("%W")
-        main_table.attach entry, i-1, i+6, main_table.n_columns+1, main_table.n_columns+2
+        label = Gtk::Label.new (first+i).strftime("%W")
+        main_table.attach label, i, i+7, 1, 2
       end
 
       35.times do |i|
-
         label = Gtk::Label.new ((temp_date+i).strftime("%A"))
         label.angle=90
-        main_table.attach label, i, i+1, main_table.n_columns+2, main_table.n_columns+3
+        main_table.attach label, i+1, i+2, main_table.n_columns+2, main_table.n_columns+3
         
         day = (temp_date+i).day
         entry = Gtk::Entry.new
+        if (temp_date+i).month != date.month 
+        entry.modify_base Gtk::STATE_NORMAL, Gdk::Color.new(20000,20000,20000)
+        end
         entry.text=day.to_s
         entry.width_chars=2
         entry.editable=false
-        main_table.attach entry, i, i+1, main_table.n_columns+3, main_table.n_columns+4
+        main_table.attach entry, i+1, i+2, main_table.n_columns+3, main_table.n_columns+4
+
+        von_entry = Gtk::Entry.new
+        von_entry.width_chars=4
+        main_table.attach von_entry, i+1, i+2, main_table.n_columns+4, main_table.n_columns+5
+
+        pause_entry = Gtk::Entry.new
+        pause_entry.width_chars=4
+        main_table.attach pause_entry, i+1, i+2, main_table.n_columns+5, main_table.n_columns+6
+
+        bis_entry = Gtk::Entry.new
+        bis_entry.width_chars=4
+        main_table.attach bis_entry, i+1, i+2, main_table.n_columns+6, main_table.n_columns+7
 
       end
 
+        von_label = Gtk::Label.new ("Von")
+        main_table.attach von_label, 0, 1, main_table.n_columns+4, main_table.n_columns+5
 
+        pause_label = Gtk::Label.new ("Pause")
+        main_table.attach pause_label, 0, 1, main_table.n_columns+5, main_table.n_columns+6
+
+        bis_label = Gtk::Label.new ("Bis")
+        main_table.attach bis_label, 0, 1, main_table.n_columns+6, main_table.n_columns+7
+
+        seperator = Gtk::Label.new ("...")
+        main_table.attach seperator, 0, 45, main_table.n_columns+7, main_table.n_columns+8
 
     end
 
