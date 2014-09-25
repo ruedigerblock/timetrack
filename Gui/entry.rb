@@ -13,7 +13,7 @@ module Gui
       if result >= 0
         w.text=result.to_s
       end
-       w.parent.parent.parent.parent.update_data
+#       w.parent.parent.parent.parent.update_data
       end
     end
   end

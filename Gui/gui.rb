@@ -13,7 +13,7 @@ module Gui
 
     def init_ui
       set_title "timetrack"
-      self.resizable=(false)
+#      self.resizable=(false)
       build_ui
       signal_connect "destroy" do
         Gtk.main_quit
@@ -25,7 +25,7 @@ module Gui
 
     def build_ui
       date=DateTime.now
-      main_table = Gtk::Table.new 0,0
+      main_table = Gtk::Table.new 0,0, true
       add(main_table)
 
       main_table_left_button = Gtk::Button.new "<"
@@ -40,52 +40,73 @@ module Gui
 
       first=Date.new(date.year,date.month,1)
       temp_date=first-first.wday+1
- 
+
       1.step(35,7) do |i|
-        label = Gtk::Label.new (first+i).strftime("%W")
-        main_table.attach label, i, i+7, 1, 2
+        label = Gtk::Label.new (first+i).cweek.to_s
+        main_table.attach label, i, i+1, 1, 2
       end
 
-      35.times do |i|
-        label = Gtk::Label.new ((temp_date+i).strftime("%A"))
-        label.angle=90
-        main_table.attach label, i+1, i+2, main_table.n_columns+2, main_table.n_columns+3
-        
-        day = (temp_date+i).day
-        entry = Gtk::Entry.new
-        if (temp_date+i).month != date.month 
-        entry.modify_base Gtk::STATE_NORMAL, Gdk::Color.new(20000,20000,20000)
+      36.times do |i|
+       
+        table = Gtk::Table.new 0, 0, false
+        table.name=i.to_s
+
+        if i==0
+          weekday_label = Gtk::Label.new ("")
+          weekday_label.angle=90
+          weekday_label.height_request=70
+          
+          date_label = Gtk::Label.new ("Date")
+          start_label = Gtk::Label.new ("start")
+          break_label = Gtk::Label.new ("break")
+          end_label = Gtk::Label.new ("end")
+          result_label = Gtk::Label.new ("=")
+
+          table.attach weekday_label, 0, 1, 0, 1          
+          table.attach date_label   , 0, 1, 1, 2          
+          table.attach start_label  , 0, 1, 2, 3
+          table.attach break_label  , 0, 1, 3, 4
+          table.attach end_label    , 0, 1, 4, 5
+          table.attach result_label , 0, 1, 5, 6
+
+        else 
+
+          label = Gtk::Label.new (temp_date+i-1).strftime("%A")
+          label.angle=90
+          label.height_request=80
+
+          day = (temp_date+i-1).day
+          day_entry = Gtk::Entry.new
+          if (temp_date+i).month != date.month 
+          day_entry.modify_base Gtk::STATE_NORMAL, Gdk::Color.new(20000,20000,20000)
+          end
+          day_entry.text=day.to_s
+          day_entry.width_chars=2
+          day_entry.editable=false
+
+          start_entry = Entry.new
+          start_entry.width_chars=4
+
+          break_entry = Entry.new
+          break_entry.width_chars=4
+
+          end_entry = Entry.new
+          end_entry.width_chars=4
+          
+          result_entry = Gtk::Entry.new
+          result_entry.width_chars=4
+          
+          table.attach label        , 0, 1, 0, 1
+          table.attach day_entry    , 0, 1, 1, 2
+          table.attach start_entry  , 0, 1, 2, 3
+          table.attach break_entry  , 0, 1, 3, 4
+          table.attach end_entry    , 0, 1, 4, 5
+          table.attach result_entry , 0, 1, 5, 6
+
         end
-        entry.text=day.to_s
-        entry.width_chars=2
-        entry.editable=false
-        main_table.attach entry, i+1, i+2, main_table.n_columns+3, main_table.n_columns+4
-
-        von_entry = Gtk::Entry.new
-        von_entry.width_chars=4
-        main_table.attach von_entry, i+1, i+2, main_table.n_columns+4, main_table.n_columns+5
-
-        pause_entry = Gtk::Entry.new
-        pause_entry.width_chars=4
-        main_table.attach pause_entry, i+1, i+2, main_table.n_columns+5, main_table.n_columns+6
-
-        bis_entry = Gtk::Entry.new
-        bis_entry.width_chars=4
-        main_table.attach bis_entry, i+1, i+2, main_table.n_columns+6, main_table.n_columns+7
+        main_table.attach table, i,i+1,2,10
 
       end
-
-        von_label = Gtk::Label.new ("Von")
-        main_table.attach von_label, 0, 1, main_table.n_columns+4, main_table.n_columns+5
-
-        pause_label = Gtk::Label.new ("Pause")
-        main_table.attach pause_label, 0, 1, main_table.n_columns+5, main_table.n_columns+6
-
-        bis_label = Gtk::Label.new ("Bis")
-        main_table.attach bis_label, 0, 1, main_table.n_columns+6, main_table.n_columns+7
-
-        seperator = Gtk::Label.new ("...")
-        main_table.attach seperator, 0, 45, main_table.n_columns+7, main_table.n_columns+8
 
     end
 
