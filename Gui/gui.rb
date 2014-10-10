@@ -24,8 +24,8 @@ module Gui
     end
 
     def build_ui
-      date=DateTime.now
       main_table = Gtk::Table.new 0,0, true
+
       add(main_table)
 
       main_table_left_button = Gtk::Button.new "<"
@@ -38,14 +38,16 @@ module Gui
       main_table.attach main_table_year_label,  2, 3, 0, 1
       main_table.attach main_table_right_button,3, 4, 0, 1
 
-      first=Date.new(date.year,date.month,1)
-      temp_date=first-first.wday+1
+      widgets = Hash.new
+      widgets = { 'KWs' => Array.new }
 
       1.step(35,7) do |i|
-        label = Gtk::Label.new (first+i).cweek.to_s
+        label = Gtk::Label.new
         main_table.attach label, i, i+1, 1, 2
+        widgets['KWs'] << label
       end
 
+      puts widgets.inspect
       36.times do |i|
        
         table = Gtk::Table.new 0, 0, false
@@ -70,12 +72,14 @@ module Gui
           table.attach result_label , 0, 1, 5, 6
 
         else 
-
+          temp_date=get_date 
           label = Gtk::Label.new (temp_date+i-1).strftime("%A")
           label.angle=90
           label.height_request=80
 
-          day = (temp_date+i-1).day
+          date=DateTime.now
+
+          day = (temp_date+i).day
           day_entry = Gtk::Entry.new
           if (temp_date+i).month != date.month 
           day_entry.modify_base Gtk::STATE_NORMAL, Gdk::Color.new(20000,20000,20000)
@@ -108,6 +112,19 @@ module Gui
 
       end
 
+      fill_ui main_table
+
+    end
+
+    def fill_ui (mt)
+    end
+
+    def get_date
+      date=DateTime.now
+      first=Date.new(date.year,date.month,1)
+      temp_date=first-first.wday+1
+
+       # label = Gtk::Label.new (first+i).cweek.to_s
     end
 
     def get_thirtyfive_days
