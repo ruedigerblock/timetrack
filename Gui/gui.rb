@@ -24,30 +24,35 @@ module Gui
     end
 
     def build_ui
+      date=DateTime.now
+      widgets = Hash.new
+      widgets = { 'KWs' => Array.new }
+      
       main_table = Gtk::Table.new 0,0, true
 
       add(main_table)
 
       main_table_left_button = Gtk::Button.new "<"
+      main_table_left_button.signal_connect "clicked" do
+        fill_ui main_table, widgets, date-=30
+      end
       main_table_month_label = Gtk::Label.new ("Month")
       main_table_year_label = Gtk::Label.new ("Year")
       main_table_right_button = Gtk::Button.new ">"
-      
+      main_table_right_button.signal_connect "clicked" do
+        fill_ui main_table, widgets, date+=30
+      end
       main_table.attach main_table_left_button, 0, 1, 0, 1
       main_table.attach main_table_month_label, 1, 2, 0, 1
       main_table.attach main_table_year_label,  2, 3, 0, 1
       main_table.attach main_table_right_button,3, 4, 0, 1
-
-      widgets = Hash.new
-      widgets = { 'KWs' => Array.new }
 
       1.step(35,7) do |i|
         label = Gtk::Label.new
         main_table.attach label, i, i+1, 1, 2
         widgets['KWs'] << label
       end
-
-      puts widgets.inspect
+      
       36.times do |i|
        
         table = Gtk::Table.new 0, 0, false
@@ -72,7 +77,6 @@ module Gui
           table.attach result_label , 0, 1, 5, 6
 
         else 
-          date=DateTime.now
           temp_date=get_date date
           label = Gtk::Label.new (temp_date+i-1).strftime("%A")
           label.angle=90
@@ -116,8 +120,9 @@ module Gui
 
     end
 
-    def fill_ui (mt,ws,date)
+    def fill_ui (mt,ws,dt)
       widgets = ws
+      date = dt
       temp_date=get_date date
       widgets['KWs'].each_with_index do |w,i|
         w.text=(temp_date.cweek+i).to_s
