@@ -84,7 +84,7 @@ module Gui
           if (temp_date+i).month != date.month 
           day_entry.modify_base Gtk::STATE_NORMAL, Gdk::Color.new(20000,20000,20000)
           end
-          day_entry.text=day.to_s
+        #  day_entry.text=day.to_s
           day_entry.width_chars=2
           day_entry.editable=false
 
@@ -112,11 +112,16 @@ module Gui
 
       end
 
-      fill_ui main_table
+      fill_ui main_table, widgets
 
     end
 
-    def fill_ui (mt)
+    def fill_ui (mt,ws)
+      widgets = ws
+      temp_date=get_date
+      widgets['KWs'].each_with_index do |w,i|
+        w.text=(temp_date.cweek+i).to_s
+      end
     end
 
     def get_date
