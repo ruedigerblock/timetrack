@@ -72,12 +72,12 @@ module Gui
           table.attach result_label , 0, 1, 5, 6
 
         else 
-          temp_date=get_date 
+          date=DateTime.now
+          temp_date=get_date date
           label = Gtk::Label.new (temp_date+i-1).strftime("%A")
           label.angle=90
           label.height_request=80
 
-          date=DateTime.now
 
           day = (temp_date+i).day
           day_entry = Gtk::Entry.new
@@ -112,20 +112,20 @@ module Gui
 
       end
 
-      fill_ui main_table, widgets
+      fill_ui main_table, widgets, date
 
     end
 
-    def fill_ui (mt,ws)
+    def fill_ui (mt,ws,date)
       widgets = ws
-      temp_date=get_date
+      temp_date=get_date date
       widgets['KWs'].each_with_index do |w,i|
         w.text=(temp_date.cweek+i).to_s
       end
     end
 
-    def get_date
-      date=DateTime.now
+    def get_date (dt)
+      date=dt
       first=Date.new(date.year,date.month,1)
       temp_date=first-first.wday+1
 
