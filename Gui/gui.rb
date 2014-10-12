@@ -13,7 +13,7 @@ module Gui
 
     def init_ui
       set_title "timetrack"
-#      self.resizable=(false)
+      self.resizable=(false)
       build_ui
       signal_connect "destroy" do
         Gtk.main_quit
@@ -80,9 +80,13 @@ module Gui
 
         else 
           temp_date=get_date date
-          weekday_label = Gtk::Label.new (temp_date+i-1).strftime("%A")
+          dayname = (temp_date+i-1).strftime("%A")
+          weekday_label = Gtk::Label.new dayname
           weekday_label.angle=90
           weekday_label.height_request=80
+          if dayname == "Saturday" or dayname == "Sunday"
+            weekday_label.set_markup ("<i><b>#{dayname}</b></i>")
+          end
 
 
           day_entry = Gtk::Entry.new
