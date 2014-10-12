@@ -147,11 +147,17 @@ module Gui
         widgets['Days'][(i+1).to_s]["start_entry"].text=""
         widgets['Days'][(i+1).to_s]["break_entry"].text=""
         widgets['Days'][(i+1).to_s]["end_entry"].text=""
+        widgets['Days'][(i+1).to_s]["result_entry"].text=""
 
         if save
-          widgets['Days'][(i+1).to_s]["start_entry"].text=save["start"].to_s
-          widgets['Days'][(i+1).to_s]["break_entry"].text=save["break"].to_s
-          widgets['Days'][(i+1).to_s]["end_entry"].text=save["end"].to_s
+          _start=save["start"]
+          _break=save["break"]
+          _end=save["end"]
+          _result=_end.to_f-_break.to_f-_start.to_f
+          widgets['Days'][(i+1).to_s]["start_entry"].text=_start.to_s
+          widgets['Days'][(i+1).to_s]["break_entry"].text=_break.to_s
+          widgets['Days'][(i+1).to_s]["end_entry"].text=_end.to_s
+          widgets['Days'][(i+1).to_s]["result_entry"].text=_result.to_s
         end
         widgets['Days'][(i+1).to_s]["day_entry"].text=day.to_s
         widgets['Days'][(i+1).to_s]['day_entry'].modify_base Gtk::STATE_NORMAL, Gdk::Color.new(65000,65000,65000)
