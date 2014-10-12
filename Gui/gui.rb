@@ -5,7 +5,8 @@ module Gui
 
       @config=Gui::IO.load_config
       @width, @height=default_size
-      
+      @data=Gui::IO.load_data(2014)
+
       init_ui
       show_all
 
@@ -87,26 +88,29 @@ module Gui
           if dayname == "Saturday" or dayname == "Sunday"
             weekday_label.set_markup ("<i><b>#{dayname}</b></i>")
           end
-
+  
+          widgets['Days'][i.to_s] = Hash.new
 
           day_entry = Gtk::Entry.new
-          widgets['Days'][i.to_s]= {"day_entry" =>  day_entry }
-
-
           day_entry.width_chars=2
           day_entry.editable=false
+          widgets['Days'][i.to_s]['day_entry']=day_entry
 
           start_entry = Entry.new
           start_entry.width_chars=4
+          widgets['Days'][i.to_s]["start_entry"]=start_entry
 
           break_entry = Entry.new
           break_entry.width_chars=4
+          widgets['Days'][i.to_s]["break_entry"]=break_entry
 
           end_entry = Entry.new
           end_entry.width_chars=4
+          widgets['Days'][i.to_s]["end_entry"]=end_entry
           
           result_entry = Gtk::Entry.new
           result_entry.width_chars=4
+          widgets['Days'][i.to_s]["result_entry"]=result_entry
           
           table.attach weekday_label        , 0, 1, 0, 1
           table.attach day_entry    , 0, 1, 1, 2
@@ -138,6 +142,17 @@ module Gui
      
       widgets['Days'].each_with_index do |widget,i|
         day = (temp_date+i).day
+
+        save = @data[(temp_date+i).to_date]
+        widgets['Days'][(i+1).to_s]["start_entry"].text=""
+        widgets['Days'][(i+1).to_s]["break_entry"].text=""
+        widgets['Days'][(i+1).to_s]["end_entry"].text=""
+
+        if save
+          widgets['Days'][(i+1).to_s]["start_entry"].text=save["start"].to_s
+          widgets['Days'][(i+1).to_s]["break_entry"].text=save["break"].to_s
+          widgets['Days'][(i+1).to_s]["end_entry"].text=save["end"].to_s
+        end
         widgets['Days'][(i+1).to_s]["day_entry"].text=day.to_s
         widgets['Days'][(i+1).to_s]['day_entry'].modify_base Gtk::STATE_NORMAL, Gdk::Color.new(65000,65000,65000)
         
