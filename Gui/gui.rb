@@ -72,7 +72,7 @@ module Gui
           end_label = Gtk::Label.new ("end")
           result_label = Gtk::Label.new ("=")
 
-          table.attach weekday_label, 0, 1, 0, 1          
+          table.attach weekday_label, 0, 1, 0, 1
           table.attach date_label   , 0, 1, 1, 2          
           table.attach start_label  , 0, 1, 2, 3
           table.attach break_label  , 0, 1, 3, 4
