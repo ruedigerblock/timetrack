@@ -11,6 +11,7 @@ module Gui::IO
     if data==false 
       data={}
     end
+
     return data
 
   end

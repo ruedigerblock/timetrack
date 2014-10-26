@@ -19,41 +19,41 @@ module Gui
       signal_connect "destroy" do
         Gtk.main_quit
 #        update_data
-#        Gui::IO.write_data @calendar.year,@data
+        Gui::IO.write_data 2014,@data
       end
 
     end
 
     def build_ui
-      date=DateTime.now
-      widgets = Hash.new
-      widgets = { 'Header' => Hash.new, 'KWs' => Array.new, 'Days' => Hash.new }
+      @date=DateTime.now
+      @widgets = Hash.new
+      @widgets = { 'Header' => Hash.new, 'KWs' => Array.new, 'Days' => Hash.new }
       
-      main_table = Gtk::Table.new 0,0, true
+      @main_table = Gtk::Table.new 0,0, true
 
-      add(main_table)
+      add(@main_table)
 
       main_table_left_button = Gtk::Button.new "<"
       main_table_left_button.signal_connect "clicked" do
-        fill_ui main_table, widgets, date-=30
+        fill_ui @main_table, @widgets, @date-=30
       end
       main_table_month_label = Gtk::Label.new
-      widgets['Header']['month_label'] = main_table_month_label
+      @widgets['Header']['month_label'] = main_table_month_label
       main_table_year_label = Gtk::Label.new 
-      widgets['Header']['year_label'] = main_table_year_label
+      @widgets['Header']['year_label'] = main_table_year_label
       main_table_right_button = Gtk::Button.new ">"
       main_table_right_button.signal_connect "clicked" do
-        fill_ui main_table, widgets, date+=30
+        fill_ui @main_table, @widgets, @date+=30
       end
-      main_table.attach main_table_left_button, 0, 1, 0, 1
-      main_table.attach main_table_month_label, 1, 10, 0, 1
-      main_table.attach main_table_year_label,  20, 35, 0, 1
-      main_table.attach main_table_right_button,35, 36, 0, 1
+      @main_table.attach main_table_left_button, 0, 1, 0, 1
+      @main_table.attach main_table_month_label, 1, 10, 0, 1
+      @main_table.attach main_table_year_label,  20, 35, 0, 1
+      @main_table.attach main_table_right_button,35, 36, 0, 1
 
       1.step(35,7) do |i|
         label = Gtk::Label.new
-        main_table.attach label, i, i+1, 1, 2
-        widgets['KWs'] << label
+        @main_table.attach label, i, i+1, 1, 2
+        @widgets['KWs'] << label
       end
       
       36.times do |i|
@@ -80,7 +80,7 @@ module Gui
           table.attach result_label , 0, 1, 5, 6
 
         else 
-          temp_date=get_date date
+          temp_date=get_date @date
           dayname = (temp_date+i-1).strftime("%A")
           weekday_label = Gtk::Label.new dayname
           weekday_label.angle=90
@@ -89,28 +89,28 @@ module Gui
             weekday_label.set_markup ("<i><b>#{dayname}</b></i>")
           end
   
-          widgets['Days'][i.to_s] = Hash.new
+          @widgets['Days'][i.to_s] = Hash.new
 
           day_entry = Gtk::Entry.new
           day_entry.width_chars=2
           day_entry.editable=false
-          widgets['Days'][i.to_s]['day_entry']=day_entry
+          @widgets['Days'][i.to_s]['day_entry']=day_entry
 
           start_entry = Entry.new
           start_entry.width_chars=4
-          widgets['Days'][i.to_s]["start_entry"]=start_entry
+          @widgets['Days'][i.to_s]["start_entry"]=start_entry
 
           break_entry = Entry.new
           break_entry.width_chars=4
-          widgets['Days'][i.to_s]["break_entry"]=break_entry
+          @widgets['Days'][i.to_s]["break_entry"]=break_entry
 
           end_entry = Entry.new
           end_entry.width_chars=4
-          widgets['Days'][i.to_s]["end_entry"]=end_entry
+          @widgets['Days'][i.to_s]["end_entry"]=end_entry
           
           result_entry = Gtk::Entry.new
           result_entry.width_chars=4
-          widgets['Days'][i.to_s]["result_entry"]=result_entry
+          @widgets['Days'][i.to_s]["result_entry"]=result_entry
           
           table.attach weekday_label        , 0, 1, 0, 1
           table.attach day_entry    , 0, 1, 1, 2
@@ -120,11 +120,11 @@ module Gui
           table.attach result_entry , 0, 1, 5, 6
 
         end
-        main_table.attach table, i,i+1,2,10
+        @main_table.attach table, i,i+1,2,10
 
       end
 
-      fill_ui main_table, widgets, date
+      fill_ui @main_table, @widgets, @date
 
     end
 
@@ -143,13 +143,18 @@ module Gui
       widgets['Days'].each_with_index do |widget,i|
         day = (temp_date+i).day
 
+        widgets['Days'][(i+1).to_s].each do |widget|
+          widget[1].text=""
+        end
+        
+        widgets['Days'][(i+1).to_s]["start_entry"].name="#{(temp_date+i)}_start"
+        widgets['Days'][(i+1).to_s]["break_entry"].name="#{(temp_date+i)}_break"
+        widgets['Days'][(i+1).to_s]["end_entry"].name="#{(temp_date+i)}_end"
+        
         save = @data[(temp_date+i).to_date]
-        widgets['Days'][(i+1).to_s]["start_entry"].text=""
-        widgets['Days'][(i+1).to_s]["break_entry"].text=""
-        widgets['Days'][(i+1).to_s]["end_entry"].text=""
-        widgets['Days'][(i+1).to_s]["result_entry"].text=""
 
         if save
+
           _start=save["start"]
           _break=save["break"]
           _end=save["end"]
@@ -204,43 +209,18 @@ module Gui
       self.set_default_size @width,@height
     end
 
-    def update_data
-      d = @calendar.date
-      date = Date.new(d[0],d[1],d[2])
-      jobs = {}
+    def set_data(w,name,data)
+      w=w.split('-')
+      date=Date.new(w[0].to_i,w[1].to_i,w[2].to_i)
 
-      temp_a = Array.new
-      @task_table.each do |child|
-        temp_a << child
+      if !@data[date]
+        tmp = { date => { "start" => "", "break" => "", "end" => ""} }
+        @data.merge!(tmp)
       end
 
-      temp_a = temp_a.reverse
-      i=0
-      temp_a.each do |child|
-        a = Array.new
-        child.each do |c|
-          a<<c
-        end
-        proj = a[2].active_text
-        text  = a[1].text
-        dura  = a[0].text
-        job = {
-            i => {
-          'name' => proj,
-          'text' => text,
-          'duration' => dura
-          }
-        }
-        jobs.merge!(job)
-        i+=1
-      end
-       @data[date] = {
-         'start' => @von_entry.text,
-         'break' => @pause_entry.text,
-         'end'   => @bis_entry.text,
-         'jobs' => jobs
-       }
-        update_summe
+      @data[date]["#{name}"]=data
+
+      fill_ui @main_table, @widgets, @date
     end
 
     def update_von_bis(date)
