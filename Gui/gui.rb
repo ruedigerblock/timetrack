@@ -18,7 +18,6 @@ module Gui
       build_ui
       signal_connect "destroy" do
         Gtk.main_quit
-#        update_data
         Gui::IO.write_data 2014,@data
       end
 
@@ -26,11 +25,9 @@ module Gui
 
     def build_ui
       @date=DateTime.now
-      @widgets = Hash.new
       @widgets = { 'Header' => Hash.new, 'KWs' => Array.new, 'Days' => Hash.new }
       
       @main_table = Gtk::Table.new 0,0, true
-
       add(@main_table)
 
       main_table_left_button = Gtk::Button.new "<"
@@ -154,7 +151,6 @@ module Gui
         save = @data[(temp_date+i).to_date]
 
         if save
-
           _start=save["start"]
           _break=save["break"]
           _end=save["end"]
@@ -173,15 +169,12 @@ module Gui
       end
     end
 
-    def get_date (dt)
-      date=dt
+    def get_date (date)
       first=Date.new(date.year,date.month,1)
       temp_date=first-first.wday+1
-
     end
 
     def get_thirtyfive_days
-
       days = Array.new
       5.times do 
         Date::DAYNAMES.each do |day|
@@ -191,7 +184,6 @@ module Gui
       days.push days.shift
       return days 
     end
-
 
     def create_task(window,proj=nil,text="",dur="0.0")
       task = Task.new(window,proj,text,dur)
@@ -219,63 +211,7 @@ module Gui
       end
 
       @data[date]["#{name}"]=data
-
       fill_ui @main_table, @widgets, @date
-    end
-
-    def update_von_bis(date)
-
-      dayname=date.strftime('%A')
-      @von_entry.text = ""
-      @pause_entry.text = ""
-      @bis_entry.text = ""
-
-      if !@data[date] and dayname != "Saturday" and dayname != "Sunday"
-        day = {
-          date => {
-            'start' => @config['general']['start'],
-            'break' => @config['general']['break'],
-            'end'   => @config['general']['end'],           
-            'jobs'=> {}
-          }
-        }
-        @data.merge!(day)
-      end
-     
-      if @data[date]
-        @von_entry.text   = @data[date]['start'].to_s.chomp
-        @pause_entry.text = @data[date]['break'].to_s.chomp
-        @bis_entry.text   = @data[date]['end'].to_s.chomp
-      end
-    end
-
-    def update_summe
-      summe = @bis_entry.text.to_f - @von_entry.text.to_f - @pause_entry.text.to_f
-      case
-        when summe < 8 then color = "red"
-        else color = "green"
-      end
-        
-      @summe.set_markup("<big><b><span foreground='#{color}'>#{summe}</span></b></big>")
-
-    end
-
-    def delete_tasks
-      @task_table.each do |task|
-        remove_task task
-      end
-    end
-
-    def add_tasks (date)
-      if @data[date]
-        @data[date]['jobs'].each do |job|
-          create_task self, job[1]['name'], job[1]['text'], job[1]['duration']
-        end
-      end    
-    end
-      
-    def config
-      return @config
     end
 
   end
