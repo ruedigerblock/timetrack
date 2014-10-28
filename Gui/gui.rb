@@ -14,7 +14,8 @@ module Gui
 
     def init_ui
       set_title "timetrack"
-      self.resizable=(false)
+      self.set_default_size 800,300
+   #   self.resizable=(false)
       build_ui
       signal_connect "destroy" do
         Gtk.main_quit
@@ -24,11 +25,15 @@ module Gui
     end
 
     def build_ui
+      sw = Gtk::ScrolledWindow.new
+      add(sw)
+
+
       @date=DateTime.now
       @widgets = { 'Header' => Hash.new, 'KWs' => Array.new, 'Days' => Hash.new }
       
       @main_table = Gtk::Table.new 0,0, true
-      add(@main_table)
+      sw.add_with_viewport(@main_table)
 
       main_table_left_button = Gtk::Button.new "<"
       main_table_left_button.signal_connect "clicked" do
@@ -52,7 +57,7 @@ module Gui
         @main_table.attach label, i, i+1, 1, 2
         @widgets['KWs'] << label
       end
-      
+
       36.times do |i|
 
         table = Gtk::Table.new 0, 0, false
@@ -76,7 +81,8 @@ module Gui
           table.attach end_label    , 0, 1, 4, 5
           table.attach result_label , 0, 1, 5, 6
 
-        else 
+        else
+
           temp_date=get_date @date
           dayname = (temp_date+i-1).strftime("%A")
           weekday_label = Gtk::Label.new dayname
@@ -85,7 +91,7 @@ module Gui
           if dayname == "Saturday" or dayname == "Sunday"
             weekday_label.set_markup ("<i><b>#{dayname}</b></i>")
           end
-  
+
           @widgets['Days'][i.to_s] = Hash.new
 
           day_entry = Gtk::Entry.new
