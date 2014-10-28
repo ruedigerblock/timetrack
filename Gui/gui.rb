@@ -33,7 +33,7 @@ module Gui
       sw.add_with_viewport maintable
       4.times do |i|
         cw = Gui::Calendarweek.new 45
-        maintable.attach cw.get_table,i,i+1,0,1
+        maintable.attach cw.get_frame,i,i+1,0,1
       end
       show_all
     end
