@@ -28,8 +28,11 @@ module Gui
       sw = Gtk::ScrolledWindow.new
       add(sw)
 
-      4.times do 
+      maintable = Gtk::Table.new 0,0
+
+      4.times do |i|
         cw = Gui::Calendarweek.new
+        maintable.attach cw i,i+1,0,0
       end
 
     end
