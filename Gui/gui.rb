@@ -30,11 +30,12 @@ module Gui
 
       maintable = Gtk::Table.new 0,0
 
+      sw.add_with_viewport maintable
       4.times do |i|
-        cw = Gui::Calendarweek.new
-        maintable.attach cw i,i+1,0,0
+        cw = Gui::Calendarweek.new 45
+        maintable.attach cw.get_table,i,i+1,0,1
       end
-
+      show_all
     end
   end
 end
