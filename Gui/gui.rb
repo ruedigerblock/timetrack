@@ -67,6 +67,7 @@ module Gui
     end
     
     def fill_ui cw
+      cw_result=0
       cw.days.each do |day|
         date = Date.commercial(2014,(cw.number.to_i),(day.number.to_i)+1)
         if @data[date.to_date]
@@ -75,13 +76,14 @@ module Gui
           _break  = store["break"].to_f
           _end    = store["end"].to_f
           _result = _end-_break-_start
-
+          cw_result+=_result
           day.start_entry.text  =_start.to_s
           day.break_entry.text  =_break.to_s
           day.end_entry.text    =_end.to_s
           day.result_label.text =_result.to_s
-        end
+        end  
       end
+      cw.result_tab.result_label.text=cw_result.to_s
     end
 
   end

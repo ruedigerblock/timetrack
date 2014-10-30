@@ -25,7 +25,7 @@ module Gui
       dayname_label = Gtk::Label.new @dayname
       dayname_label.angle=90
       dayname_label.height_request=80
-      dayname_label.yalign=0
+      dayname_label.yalign=1
     @table.attach dayname_label,0,1,0,1,Gtk::EXPAND | Gtk::FILL, Gtk::FILL,1,0
 
     end
