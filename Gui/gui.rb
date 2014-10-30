@@ -6,7 +6,8 @@ module Gui
       @config=Gui::IO.load_config
       @width, @height=default_size
       @data=Gui::IO.load_data(2014)
-
+      @date_now=DateTime.now.to_date
+      @date_first=Date.new(@date_now.year,@date_now.month,1)      
       init_ui
       show_all
 
@@ -59,7 +60,7 @@ module Gui
       maintable.attach frame,0,1,0,1
 
       4.times do |i|
-        cw = Gui::Calendarweek.new 41
+        cw = Gui::Calendarweek.new @date_first.cweek+i
         fill_ui cw
         maintable.attach cw.get_frame,1+i,1+i+1,0,1
       end
