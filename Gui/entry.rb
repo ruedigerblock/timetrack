@@ -1,7 +1,8 @@
 module Gui
   class Entry < Gtk::Entry
     def initialize 
-      super   
+      super  
+      self.width_chars=4
       self.signal_connect "scroll-event" do |w,e|
         case e.direction
           when Gdk::EventScroll::Direction::UP
@@ -18,7 +19,7 @@ module Gui
         date =  self.name.split('_').first
         name =  self.name.split('_').last
         data =  self.text
-        self.parent.parent.parent.set_data date, name, data
+      #  self.parent.parent.parent.set_data date, name, data
       end
     end
   end

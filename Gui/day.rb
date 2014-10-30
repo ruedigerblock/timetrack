@@ -1,21 +1,34 @@
 module Gui
   class Day
-    def initialize (dayname)
+    attr_accessor :start_entry, :break_entry, :end_entry, 
+                  :result_label, :dayname, :number
+    def initialize (dayname,number)
       @dayname=dayname
-      @table=Gtk::Table.new 0,0
+      @number=number
+      @table=Gtk::Table.new 0,0,false
       create_dayname_label
-    end
+      
+      @start_entry  = Gui::Entry.new
+      @break_entry  = Gui::Entry.new
+      @end_entry    = Gui::Entry.new
+      @result_label = Gtk::Label.new "0.0"
+      @result_label.height_request=25
 
-    def dayname
-      return @dayname
+      @table.attach @start_entry  ,0,1,1,2,Gtk::EXPAND | Gtk::FILL,0,0,0
+      @table.attach @break_entry  ,0,1,2,3,Gtk::EXPAND | Gtk::FILL,0,0,0
+      @table.attach @end_entry    ,0,1,3,4,Gtk::EXPAND | Gtk::FILL,0,0,0
+      @table.attach @result_label ,0,1,4,5,Gtk::EXPAND | Gtk::FILL,0,0,1
+
     end
 
     def create_dayname_label
       dayname_label = Gtk::Label.new @dayname
       dayname_label.angle=90
-      @table.attach dayname_label,0,1,0,1
-    end
+      dayname_label.height_request=80
+      dayname_label.yalign=0
+    @table.attach dayname_label,0,1,0,1,Gtk::EXPAND | Gtk::FILL, Gtk::FILL,1,0
 
+    end
 
     def get_table
       return @table

@@ -1,8 +1,9 @@
 module Gui
   class Calendarweek 
     def initialize (number)
-      @frame = Gtk::Frame.new number.to_s
-      @table = Gtk::Table.new 0,0
+      @number = number
+      @frame = Gtk::Frame.new @number.to_s
+      @table = Gtk::Table.new 0,0,true
       @frame.add(@table)
       create_days
       create_result
@@ -12,10 +13,14 @@ module Gui
       return @frame
     end
 
+    def number
+      return @number
+    end
+
     def create_days
-      @days = []
+        @days = []
       7.times do |i|
-        day = Gui::Day.new(Date::DAYNAMES[i-6])
+        day = Gui::Day.new(Date::DAYNAMES[i-6],i) 
         @days << day
         @table.attach day.get_table,i,i+1,0,1
       end
@@ -25,11 +30,21 @@ module Gui
       rt = Gui::ResultTab.new
       @table.attach rt.get_table,7,8,0,1
     end
+
+    def days
+      return @days
+    end
   end
   class ResultTab
     def initialize
-      @result_table=Gtk::Table.new 0,0
+      @result_table=Gtk::Table.new 0,0, false
       create_name_label
+
+      start_entry = Gui::Entry.new
+      break_entry = Gui::Entry.new
+      @result_table.attach start_entry,0,1,1,2,Gtk::EXPAND | Gtk::FILL,0,0,0
+      @result_table.attach break_entry,0,1,2,3,Gtk::EXPAND | Gtk::FILL,0,0,1
+
     end
 
     def get_table
@@ -39,7 +54,8 @@ module Gui
     def create_name_label
       label = Gtk::Label.new "Result"
       label.angle=90
-      @result_table.attach label,0,1,0,1
+      label.height_request=80
+      @result_table.attach label,0,1,0,1,Gtk::EXPAND | Gtk::FILL,0,0,0
     end
   end
 end
