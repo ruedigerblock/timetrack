@@ -7,7 +7,8 @@ module Gui
       @width, @height=default_size
       @data=Gui::IO.load_data(2014)
       @date_now=DateTime.now.to_date
-      @date_first=Date.new(@date_now.year,@date_now.month,1)      
+      @date_first=Date.new(@date_now.year,@date_now.month,1)
+      @cws = []
       init_ui
       show_all
 
@@ -38,10 +39,13 @@ module Gui
       frame = Gtk::Frame.new "KW"
       frame.add outer_table
 
-      label = Gtk::Label.new
-      label.angle=90
-      label.height_request=80
+      weekday_label = Gtk::Label.new "Weekday"
+      weekday_label.angle=90
+      weekday_label.height_request=80
+      weekday_label.yalign=1
 
+      date_label = Gtk::Label.new "Date"
+      date_label.height_request=25
       start_label = Gtk::Label.new "start"
       start_label.height_request=25
       break_label = Gtk::Label.new "break"
@@ -51,40 +55,46 @@ module Gui
       result_label = Gtk::Label.new "="
       result_label.height_request=25
 
-      inner_table.attach label,0,1,0,1,Gtk::EXPAND | Gtk::FILL,0,0,0
-      inner_table.attach start_label,0,1,1,2,Gtk::EXPAND | Gtk::FILL,0,0,0
-      inner_table.attach break_label,0,1,2,3,Gtk::EXPAND | Gtk::FILL,0,0,0
-      inner_table.attach end_label,0,1,3,4,Gtk::EXPAND | Gtk::FILL,0,0,0
-      inner_table.attach result_label,0,1,4,5,Gtk::EXPAND | Gtk::FILL,0,0,1
+      inner_table.attach weekday_label,0,1,0,1,Gtk::EXPAND | Gtk::FILL,0,0,0
+      inner_table.attach date_label   ,0,1,1,2,Gtk::EXPAND | Gtk::FILL,0,0,0
+      inner_table.attach start_label  ,0,1,2,3,Gtk::EXPAND | Gtk::FILL,0,0,0
+      inner_table.attach break_label  ,0,1,3,4,Gtk::EXPAND | Gtk::FILL,0,0,0
+      inner_table.attach end_label    ,0,1,4,5,Gtk::EXPAND | Gtk::FILL,0,0,0
+      inner_table.attach result_label ,0,1,5,6,Gtk::EXPAND | Gtk::FILL,0,0,1
 
       maintable.attach frame,0,1,0,1
 
-      4.times do |i|
+      5.times do |i|
         cw = Gui::Calendarweek.new @date_first.cweek+i
-        fill_ui cw
+        @cws << cw
         maintable.attach cw.get_frame,1+i,1+i+1,0,1
       end
+      fill_ui
       show_all
     end
     
-    def fill_ui cw
-      cw_result=0
-      cw.days.each do |day|
-        date = Date.commercial(2014,(cw.number.to_i),(day.number.to_i)+1)
-        if @data[date.to_date]
-          store=@data[date.to_date]
-          _start  = store["start"].to_f
-          _break  = store["break"].to_f
-          _end    = store["end"].to_f
-          _result = _end-_break-_start
-          cw_result+=_result
-          day.start_entry.text  =_start.to_s
-          day.break_entry.text  =_break.to_s
-          day.end_entry.text    =_end.to_s
-          day.result_label.text =_result.to_s
-        end  
+    def fill_ui
+      @cws.each do |cw|
+        i=0
+        cw_result=0
+        cw.days.each do |day|
+          date = Date.commercial(2014,(cw.number.to_i),(day.number.to_i)+1)
+          day.date_label.text="#{date.day}.#{date.month}"
+          if @data[date.to_date]
+            store=@data[date.to_date]
+            _start  = store["start"].to_f
+            _break  = store["break"].to_f
+            _end    = store["end"].to_f
+            _result = _end-_break-_start
+            cw_result+=_result
+            day.start_entry.text  =_start.to_s
+            day.break_entry.text  =_break.to_s
+            day.end_entry.text    =_end.to_s
+            day.result_label.text =_result.to_s
+          end  
+        end
+        cw.result_tab.result_label.text=cw_result.to_s
       end
-      cw.result_tab.result_label.text=cw_result.to_s
     end
 
   end

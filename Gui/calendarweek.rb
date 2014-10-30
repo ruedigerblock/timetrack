@@ -19,7 +19,7 @@ module Gui
     end
 
     def create_days
-        @days = []
+      @days = []
       7.times do |i|
         day = Gui::Day.new(Date::DAYNAMES[i-6],i) 
         @days << day
@@ -48,13 +48,16 @@ module Gui
       empty_label2.height_request=25
       empty_label3 = Gtk::Label.new
       empty_label3.height_request=25
+      empty_label4 = Gtk::Label.new
+      empty_label4.height_request=25
 
       @result_label = Gtk::Label.new "0.0"
       @result_label.height_request=25
       @result_table.attach empty_label1 ,0,1,1,2,Gtk::EXPAND | Gtk::FILL,0,0,0
       @result_table.attach empty_label2 ,0,1,2,3,Gtk::EXPAND | Gtk::FILL,0,0,0
       @result_table.attach empty_label3 ,0,1,3,4,Gtk::EXPAND | Gtk::FILL,0,0,0
-      @result_table.attach @result_label,0,1,4,5,Gtk::EXPAND | Gtk::FILL,0,0,1
+      @result_table.attach empty_label4 ,0,1,4,5,Gtk::EXPAND | Gtk::FILL,0,0,0
+      @result_table.attach @result_label,0,1,5,6,Gtk::EXPAND | Gtk::FILL,0,0,1
 
     end
 
